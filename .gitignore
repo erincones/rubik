@@ -1,0 +1,7 @@
+# Qt creator
+Rubik.pro.user
+Makefile
+
+# Archivos objeto
+*.o
+
