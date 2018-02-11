@@ -1,16 +1,12 @@
 #ifndef VAO_H
 #define VAO_H
 
-#include <SOIL.h>
-
 #include <GL/glew.h>
 #include <GL/freeglut.h>
 
 #include <glm/glm.hpp>
 
-
 #include <vector>
-
 #include <sstream>
 #include <string>
 #include <fstream>
@@ -34,8 +30,8 @@ class VAO
 		// Dimensiones
 		GLsizei vertices;
 
-		// Cargar datos
-		void load (const std::vector<glm::vec3> &vertex, const std::vector<glm::vec3> &normal, const std::vector<glm::vec2> &texture);
+		// Construir VAO
+		void build (const std::vector<glm::vec3> &vertex, const std::vector<glm::vec3> &normal, const std::vector<glm::vec2> &uv);
 
 
 	public:

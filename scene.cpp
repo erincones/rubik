@@ -29,6 +29,9 @@ Scene::Scene(const std::string &path, const glm::vec4 &sceneColor) : color(scene
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
 	glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
 	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+
+	// Texturas
+	glActiveTexture(GL_TEXTURE0);
 }
 
 // Dibujar

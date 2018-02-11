@@ -1,13 +1,13 @@
 #include <vao.h>
 
 // Inicializar
-void VAO::load (const std::vector<glm::vec3> &vertex, const std::vector<glm::vec3> &normal, const std::vector<glm::vec2> &texture)
+void VAO::build (const std::vector<glm::vec3> &vertex, const std::vector<glm::vec3> &normal, const std::vector<glm::vec2> &uv)
 {
 	// Dimensiones
 	vertices = (GLsizei) vertex.size();
 	std::size_t vertex_size = vertex.size() * sizeof(glm::vec3);
 	std::size_t normal_size = normal.size() * sizeof(glm::vec3);
-	std::size_t texture_size = texture.size() * sizeof(glm::vec2);
+	std::size_t uv_size = uv.size() * sizeof(glm::vec2);
 
 	// Vertex Array Object
 	glGenVertexArrays(1, &vao);
@@ -18,10 +18,10 @@ void VAO::load (const std::vector<glm::vec3> &vertex, const std::vector<glm::vec
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
 	// Asignacion de datos
-	glBufferData(GL_ARRAY_BUFFER, vertex_size + normal_size + texture_size, NULL, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, vertex_size + normal_size + uv_size, NULL, GL_STATIC_DRAW);
 	glBufferSubData(GL_ARRAY_BUFFER, 0, vertex_size, &vertex[0][0]);
 	glBufferSubData(GL_ARRAY_BUFFER, vertex_size, normal_size, &normal[0][0]);
-	glBufferSubData(GL_ARRAY_BUFFER, vertex_size + normal_size, texture_size, &texture[0][0]);
+	glBufferSubData(GL_ARRAY_BUFFER, vertex_size + normal_size, uv_size, &uv[0][0]);
 	
 	// Paso de atributos
 	glVertexPointer(3, GL_FLOAT, 0, NULL);
@@ -47,12 +47,12 @@ VAO::VAO (const std::string &path)
 	// Datos del modelo
 	std::vector<glm::vec3> vertexRAW;
 	std::vector<glm::vec3> normalRAW;
-	std::vector<glm::vec2> textureRAW;
+	std::vector<glm::vec2> uvRAW;
 
 	// Indices de caras
 	std::vector<glm::vec3> vertex;
 	std::vector<glm::vec3> normal;
-	std::vector<glm::vec2> texture;
+	std::vector<glm::vec2> uv;
 
 
 	// Lee cada linea
@@ -94,7 +94,7 @@ VAO::VAO (const std::string &path)
 		else if (token == "vt")
 		{
 			stream >> data.x >> data.y;
-			textureRAW.push_back(glm::vec2(data.x, data.y));
+			uvRAW.push_back(glm::vec2(data.x, data.y));
 		}
 
 		// Lee una cara
@@ -114,9 +114,9 @@ VAO::VAO (const std::string &path)
 			normal.push_back(normalRAW[nind[2] - 1]);
 
 			// Textura
-			texture.push_back(normalRAW[tind[0] - 1]);
-			texture.push_back(normalRAW[tind[1] - 1]);
-			texture.push_back(normalRAW[tind[2] - 1]);
+			uv.push_back(normalRAW[tind[0] - 1]);
+			uv.push_back(normalRAW[tind[1] - 1]);
+			uv.push_back(normalRAW[tind[2] - 1]);
 		}
 	}
 
@@ -124,7 +124,7 @@ VAO::VAO (const std::string &path)
 	vertexRAW.clear();
 	normalRAW.clear();
 
-	load(vertex, normal, texture);
+	build(vertex, normal, uv);
 }
 
 // Dibujar
@@ -161,8 +161,8 @@ VAO::~VAO ()
 	glBindVertexArray(0);
 	glDeleteVertexArrays(1, &vao);
 
-	vertices = 0;
-
+	// Resetea valores por defecto
 	vao = 0;
 	vbo = 0;
+	vertices = 0;
 }

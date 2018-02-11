@@ -1,7 +1,6 @@
 #ifndef SCENE_H
 #define SCENE_H
 
-
 #include <vao.h>
 
 #include <GL/glew.h>
@@ -11,8 +10,8 @@
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-
 #include <string>
+
 
 class Scene
 {

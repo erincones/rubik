@@ -18,6 +18,7 @@
 
 #include <iostream>
 
+
 class Rubik
 {
 	public:

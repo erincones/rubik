@@ -7,7 +7,8 @@ SOURCES += main.cpp \
     scene.cpp \
     cube.cpp \
     sticker.cpp \
-    vao.cpp
+    vao.cpp \
+    texture.cpp
 
 INCLUDEPATH += $$PWD/include
 DEPENDPATH += $$PWD/include
@@ -19,7 +20,8 @@ HEADERS += \
     scene.h \
     cube.h \
     sticker.h \
-	vao.h
+	vao.h \
+    texture.h
 
 DISTFILES += \
     README.md
