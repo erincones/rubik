@@ -21,10 +21,6 @@
 const GLdouble fov_factor = 3.141592653589793238462643383279502884L / 360.0L;
 
 
-// Banderas de eventos del mouse
-bool move = false;
-bool rotate = false;
-
 // Campo de vision
 GLdouble fov = 45.0L;
 
@@ -41,6 +37,11 @@ GLint loop = 0;
 // Contador de fps
 GLint fps_ms = 0;
 GLint fraps = 0;
+
+
+// Banderas de eventos del mouse
+bool move = false;
+bool rotate = false;
 
 
 // Funciones auxiliares
@@ -156,23 +157,30 @@ void motion (int x, int y)
 // Teclado
 void keyboard (unsigned char key, int, int)
 {
+	// Captura ALT
+	const bool alt = (GLUT_ACTIVE_ALT == glutGetModifiers());
+
 	switch (key)
 	{
+		// Ctrl + Enter alterna el modo pantalla completa
+		case 13: if (alt) glutFullScreenToggle(); return;
+
+		// Jugar
 		// Sentido de las agujas del reloj
-		case 'q': case 'Q': cube->play(Rubik::U0); break;
-		case 'w': case 'W': cube->play(Rubik::D0); break;
-		case 'e': case 'E': cube->play(Rubik::L0); break;
-		case 'r': case 'R': cube->play(Rubik::R0); break;
-		case 't': case 'T': cube->play(Rubik::F0); break;
-		case 'y': case 'Y': cube->play(Rubik::B0); break;
+		case 'q': case 'Q': cube->play(Rubik::U0); return;
+		case 'w': case 'W': cube->play(Rubik::D0); return;
+		case 'e': case 'E': cube->play(Rubik::L0); return;
+		case 'r': case 'R': cube->play(Rubik::R0); return;
+		case 't': case 'T': cube->play(Rubik::F0); return;
+		case 'y': case 'Y': cube->play(Rubik::B0); return;
 
 		// Sentido opuesto a las agujas del reloj
-		case 'a': case 'A': cube->play(Rubik::U1); break;
-		case 's': case 'S': cube->play(Rubik::D1); break;
-		case 'd': case 'D': cube->play(Rubik::L1); break;
-		case 'f': case 'F': cube->play(Rubik::R1); break;
-		case 'g': case 'G': cube->play(Rubik::F1); break;
-		case 'h': case 'H': cube->play(Rubik::B1); break;
+		case 'a': case 'A': cube->play(Rubik::U1); return;
+		case 's': case 'S': cube->play(Rubik::D1); return;
+		case 'd': case 'D': cube->play(Rubik::L1); return;
+		case 'f': case 'F': cube->play(Rubik::R1); return;
+		case 'g': case 'G': cube->play(Rubik::F1); return;
+		case 'h': case 'H': cube->play(Rubik::B1); return;
 	}
 }
 

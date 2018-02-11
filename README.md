@@ -10,16 +10,16 @@ Cubo Rubik en OpenGL para el proyecto final de Introducción a la Computación G
 * Modelo de iluminación Gouraud.
 * Animaciones independientes de los FPS.
 * Interacción con mouse.
- * Rotación con cuaterniones: Arrastrar con click izquierdo.
- * Click and drag: Arrastrar con click derecho.
- * Zoom: Subir y bajar rueda del mouse.
+  * Rotación con cuaterniones: Arrastrar con click izquierdo.
+  * Click and drag: Arrastrar con click derecho.
+  * Zoom: Subir y bajar rueda del mouse.
 * Interacción con teclado.
- * Jugar: Q, W, E, R, T, Y, A, S, D, F, G, H.
+  * Jugar: Q, W, E, R, T, Y, A, S, D, F, G, H.
+  * Pantalla completa: ALT + Enter.
 
 
 ### Por hacer
 
- * Pantalla completa: CTRL + Enter / F11 / Escape.
  * Mapeo de texturas.
  * Mostrar controles.
  * Mostrar número de pasos.
@@ -45,4 +45,4 @@ Cubo Rubik en OpenGL para el proyecto final de Introducción a la Computación G
 
 Los modelos 3D han sido diseñados con [Blender](https://www.blender.org/).
 
-_Aunque se trata de un proyecto de [QtCreator](https://www.qt.io/) no es difícil migrarlo a Visual Studio._
+_Aunque se trata de un proyecto de [QtCreator](https://www.qt.io/) en Lubuntu no es difícil migrarlo a Visual Studio._
