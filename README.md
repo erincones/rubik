@@ -20,17 +20,20 @@ Cubo Rubik en OpenGL para el proyecto final de Introducción a la Computación G
 
 ### Por hacer
 
- * Mapeo de texturas.
- * Mostrar controles.
- * Mostrar número de pasos.
- * Temporizador.
- * Mostrar botones para opciones.
- * N-Filas x N-Columnas x N-Capas.
- * Cambiar calidad del juego.
- * Sonido.
- * Armar cubo.
- * Ajustar velocidad del turno.
- * Ajustar FPS.
+* Mapeo de texturas.
+* Mini cubo guía para orientación.
+* Mostrar controles.
+* Mostrar número de pasos.
+* Temporizador.
+* Mostrar botones para opciones.
+* N-Filas x N-Columnas x N-Capas.
+* Cambiar calidad del juego.
+* Sonido.
+* Armar cubo.
+* Evitar que el cubo salga de la pantalla.
+* Centrar cubo.
+* Ajustar velocidad del turno.
+* Ajustar FPS.
 
 
 
