@@ -1,7 +1,10 @@
 # Qt creator
-Rubik.pro.user
 Makefile
+*.pro.user
+*.autosave
 
 # Archivos objeto
 *.o
 
+# Archivos de Blender
+*.blend1

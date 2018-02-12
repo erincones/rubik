@@ -1,5 +1,16 @@
 # Blender MTL File: 'rubik.blend'
-# Material Count: 7
+# Material Count: 8
+
+newmtl Background.000
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.000000 0.000000 0.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 1
+map_Kd background.png
 
 newmtl Cube.000
 Ns 498.039216

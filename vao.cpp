@@ -94,7 +94,7 @@ VAO::VAO (const std::string &path)
 		else if (token == "vt")
 		{
 			stream >> data.x >> data.y;
-			uvRAW.push_back(glm::vec2(data.x, data.y));
+			uvRAW.push_back(glm::vec2(data.x, 1.0F - data.y));
 		}
 
 		// Lee una cara

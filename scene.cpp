@@ -7,8 +7,8 @@ Scene::Scene(const std::string &path, const glm::vec4 &sceneColor) : vao(NULL), 
 	vao = new VAO(path + "/scene.obj");
 
 	// Posicion
-	pos = glm::dvec3(0.0L, 0.0L, -15.0L);
-	rot = glm::angleAxis(M_PI, glm::dvec3(0.0, 0.0, 1.0));
+	pos = glm::dvec3(0.0L, 0.0L, -10.5L);
+
 
 	// Material
 	scene_ambient[0] = scene_ambient[1] = scene_ambient[2] = 1.0F; scene_ambient[3] = 1.0F;
@@ -70,10 +70,18 @@ void Scene::draw () const
 	glMaterialfv(GL_FRONT, GL_SPECULAR, scene_specular);
 	glMaterialfv(GL_FRONT, GL_SHININESS, &scene_shininess);
 
-	// Dibujar objeto
+
+	// Deshabilita el Z-Buffer
+	glDisable(GL_DEPTH_TEST);
+
+	// Dibujar escena con textura
 	texture->enable();
 	vao->draw();
 	texture->disable();
+
+	// Habilita el Z-Buffer
+	glEnable(GL_DEPTH_TEST);
+
 
 	// Regresa a la matriz anterior
 	glPopMatrix();
@@ -82,7 +90,7 @@ void Scene::draw () const
 // Animar escena
 void Scene::animate()
 {
-	rot = glm::angleAxis(0.001, glm::dvec3(0.0, 1.0, 0.0)) * rot;
+	rot = glm::angleAxis(0.0005, glm::dvec3(0.0, 1.0, 0.0)) * rot;
 }
 
 // Destructor

@@ -30,7 +30,7 @@ glm::dvec3 Rubik::projectToSphere (const int &x, const int &y)
 Rubik::Rubik (const std::string &path, const GLdouble &fovy) : fov(fovy), dim(3), cube_vao(NULL), sticker_vao(NULL)
 {
 	// Posicion y rotacion inicial
-	pos_1 = glm::dvec3( 0.0L,   0.0L, -7.5L);
+	pos_1 = glm::dvec3( 0.0L,   0.0L, -12.5L);
 	rot   = glm::dquat(-0.96, -0.21L, 0.17L, 0.04);
 
 
@@ -148,8 +148,8 @@ void Rubik::zoom (const bool &dir)
 {
 	pos_1.z -= pos_1.z * (dir ? -0.05 : 0.05);
 
-	if (pos_1.z > -5.0L) pos_1.z = -5.0L;
-	if (pos_1.z < -12.5L) pos_1.z = -12.5L;
+	if (pos_1.z > -4.0L) pos_1.z = -4.0L;
+	if (pos_1.z < -17.5L) pos_1.z = -17.5L;
 }
 
 // Jugar
