@@ -2,6 +2,7 @@
 #define SCENE_H
 
 #include <vao.h>
+#include <texture.h>
 
 #include <GL/glew.h>
 #include <GL/freeglut.h>
@@ -18,6 +19,7 @@ class Scene
 	private:
 		// Modelo del escenario
 		VAO *vao;
+		Texture *texture;
 
 		// Posicion y rotacion
 		glm::dvec3 pos;
@@ -39,6 +41,9 @@ class Scene
 	public:
 		// Constructor
 		Scene (const std::string &path, const glm::vec4 &sceneColor = glm::vec4());
+
+		// Asignar textura
+		bool setTexture (const std::string &path);
 
 		// Dibujar
 		void draw () const;

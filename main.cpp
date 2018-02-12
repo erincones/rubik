@@ -66,7 +66,7 @@ void reshape (int w, int h)
 	// Reestablece la patriz de proyeccion
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	perspective(fov, (GLdouble) w / (GLdouble) h, 1.0L, 50.0L);
+	perspective(fov, (GLdouble) w / (GLdouble) h, 1.0L, 150.0L);
 
 	// Regresa a la matriz del modelo
 	glMatrixMode(GL_MODELVIEW);
@@ -185,7 +185,7 @@ void keyboard (unsigned char key, int, int)
 }
 
 // Al finalizar la aplicacion
-void end ()
+void close ()
 {
 	delete cube;
 	delete scene;
@@ -198,17 +198,12 @@ int main(int argc, char **argv)
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH | GLUT_MULTISAMPLE);
 	glutInitWindowPosition((glutGet(GLUT_SCREEN_WIDTH) - 800) >> 1, (glutGet(GLUT_SCREEN_HEIGHT) - 600) >> 1);
 	glutInitWindowSize(800, 600);
-	glutCreateWindow("Rubik Game");
+	glutCreateWindow("Rubik");
 	glutCreateMenu(NULL);
 
 
 	// Inicializar GLEW
 	glewInit();
-
-	// Back face culling, Z-Buffer y aliasing
-	glEnable(GL_CULL_FACE);
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_MULTISAMPLE);
 
 
 	// Callbacks de GLUT
@@ -218,7 +213,7 @@ int main(int argc, char **argv)
 	glutMouseFunc(mouse);
 	glutMotionFunc(motion);
 	glutKeyboardFunc(keyboard);
-
+	glutCloseFunc(close);
 
 	// Construir cubo y escenario
 	std::string path = argv[0];
@@ -226,10 +221,7 @@ int main(int argc, char **argv)
 
 	cube = new Rubik(path, fov);
 	scene = new Scene(path, glm::dvec4(0.70L, 0.70L, 0.8L, 0.1L));
-
-
-	// Al finalizar la aplicacion
-	atexit(end);
+	scene->setTexture(path + "/background.png");
 
 	// Loop principal de GLUT
 	glutMainLoop();

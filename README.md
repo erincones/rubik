@@ -8,6 +8,7 @@ Cubo Rubik en OpenGL para el proyecto final de Introducción a la Computación G
 * Lectura y despliegue de archivos OBJ.
 * Manejo de datos con Vertex Array Object (VAO).
 * Modelo de iluminación Gouraud.
+* Mapeo de texturas.
 * Animaciones independientes de los FPS.
 * Interacción con mouse.
   * Rotación con cuaterniones: Arrastrar con click izquierdo.
@@ -20,7 +21,6 @@ Cubo Rubik en OpenGL para el proyecto final de Introducción a la Computación G
 
 ### Por hacer
 
-* Mapeo de texturas.
 * Mini cubo guía para orientación.
 * Mostrar controles.
 * Mostrar número de pasos.

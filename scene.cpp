@@ -1,14 +1,14 @@
 #include <scene.h>
 
 // Constructor
-Scene::Scene(const std::string &path, const glm::vec4 &sceneColor) : color(sceneColor)
+Scene::Scene(const std::string &path, const glm::vec4 &sceneColor) : vao(NULL), texture(NULL), color(sceneColor)
 {
 	// Cargar modelo del escenario
 	vao = new VAO(path + "/scene.obj");
 
 	// Posicion
-	pos = glm::dvec3(0.0L, 0.0L, -12.5L);
-
+	pos = glm::dvec3(0.0L, 0.0L, -15.0L);
+	rot = glm::angleAxis(M_PI, glm::dvec3(0.0, 0.0, 1.0));
 
 	// Material
 	scene_ambient[0] = scene_ambient[1] = scene_ambient[2] = 1.0F; scene_ambient[3] = 1.0F;
@@ -32,6 +32,24 @@ Scene::Scene(const std::string &path, const glm::vec4 &sceneColor) : color(scene
 
 	// Texturas
 	glActiveTexture(GL_TEXTURE0);
+	glEnable(GL_TEXTURE_2D);
+
+	// Back face culling, Z-Buffer y aliasing
+	glEnable(GL_CULL_FACE);
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_MULTISAMPLE);
+}
+
+// Asigna una textura
+bool Scene::setTexture (const std::string &path)
+{
+	// Elimina la textura anterior
+	if (texture != NULL) delete texture;
+
+	// Crea la textura nueva
+	texture = new Texture(path);
+
+	return texture->valid();
 }
 
 // Dibujar
@@ -53,7 +71,9 @@ void Scene::draw () const
 	glMaterialfv(GL_FRONT, GL_SHININESS, &scene_shininess);
 
 	// Dibujar objeto
+	texture->enable();
 	vao->draw();
+	texture->disable();
 
 	// Regresa a la matriz anterior
 	glPopMatrix();
@@ -62,12 +82,13 @@ void Scene::draw () const
 // Animar escena
 void Scene::animate()
 {
-	rot = glm::angleAxis(0.01, glm::dvec3(0.0, 1.0, 0.0)) * rot;
+	rot = glm::angleAxis(0.001, glm::dvec3(0.0, 1.0, 0.0)) * rot;
 }
 
 // Destructor
 Scene::~Scene()
 {
 	delete vao;
+	delete texture;
 }
 

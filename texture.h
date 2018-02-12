@@ -29,6 +29,9 @@ class Texture
 		void enable () const;
 		void disable () const;
 
+		// Comprueba si es una textura valida
+		bool valid () const;
+
 		// Destructor
 		~Texture ();
 };

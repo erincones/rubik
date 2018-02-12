@@ -49,7 +49,7 @@ VAO::VAO (const std::string &path)
 	std::vector<glm::vec3> normalRAW;
 	std::vector<glm::vec2> uvRAW;
 
-	// Indices de caras
+	// Datos por vertice
 	std::vector<glm::vec3> vertex;
 	std::vector<glm::vec3> normal;
 	std::vector<glm::vec2> uv;
@@ -114,15 +114,16 @@ VAO::VAO (const std::string &path)
 			normal.push_back(normalRAW[nind[2] - 1]);
 
 			// Textura
-			uv.push_back(normalRAW[tind[0] - 1]);
-			uv.push_back(normalRAW[tind[1] - 1]);
-			uv.push_back(normalRAW[tind[2] - 1]);
+			uv.push_back(uvRAW[tind[0] - 1]);
+			uv.push_back(uvRAW[tind[1] - 1]);
+			uv.push_back(uvRAW[tind[2] - 1]);
 		}
 	}
 
 	// Limpia memoria
 	vertexRAW.clear();
 	normalRAW.clear();
+	uvRAW.clear();
 
 	build(vertex, normal, uv);
 }
