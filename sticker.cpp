@@ -5,82 +5,77 @@ const GLdouble Sticker::scale = 0.5L;
 const double Sticker::PI_2 = 1.57079632679489661923;
 const double Sticker::PI   = 3.14159265358979323846;
 
+// Geometria y material
+VAO *Sticker::vao = NULL;
+GLfloat Sticker::ambient[4]  = {0.50F, 0.50F, 0.50F, 1.0F};
+GLfloat Sticker::specular[4] = {0.20F, 0.20F, 0.20F, 1.0F};
+GLfloat Sticker::shininess   =  64.0F;
+
+
 // Constructor
-Sticker::Sticker (const VAO *const object, const FACE &dir) : vao(object), side(dir)
+Sticker::Sticker (const FACE &dir) : side(dir)
 {
 	switch (side)
 	{
-		// Arriba
+		// Arriba    | Blanco
 		case Sticker::UP:
 			pos.y = Sticker::scale;
 
-			// Blanco
 			type = Sticker::WHITE;
-			color = glm::dvec4(0.8L, 0.8L, 0.8L, 1.0L);
+			setColor(0.8F, 0.8F, 0.8F);
 			break;
 
-		// Abajo
+		// Abajo     | Amarillo
 		case Sticker::DOWN:
 			pos.y = -Sticker::scale;
 			rot = glm::angleAxis(Sticker::PI, glm::dvec3(1.0L, 0.0L, 0.0L));
 
-			// Amarillo
 			type = Sticker::YELLOW;
-			color = glm::dvec4(0.8L, 0.8L, 0.0L, 1.0L);
+			setColor(0.8F, 0.8F, 0.0F);
 			break;
 
-		// Izquierda
+		// Izquierda | Naranja
 		case Sticker::LEFT:
 			pos.x = -Sticker::scale;
 			rot = glm::angleAxis(Sticker::PI_2, glm::dvec3(0.0L, 0.0L, 1.0L));
 
-			// Naranja
 			type = Sticker::ORANGE;
-			color = glm::dvec4(0.8L, 0.376L, 0.0L, 1.0L);
+			setColor(0.8F, 0.376F, 0.0F);
 			break;
 
-		// Derecha
+		// Derecha   | Rojo
 		case Sticker::RIGHT:
 			pos.x = Sticker::scale;
 			rot = glm::angleAxis(-Sticker::PI_2, glm::dvec3(0.0L, 0.0L, 1.0L));
 
-			// Rojo
 			type = Sticker::RED;
-			color = glm::dvec4(0.8L, 0.0L, 0.0L, 1.0L);
+			setColor(0.8F, 0.0F, 0.0F);
 			break;
 
-		// Fente
+		// Fente     | Verde
 		case Sticker::FRONT:
 			pos.z = Sticker::scale;
 			rot = glm::angleAxis(Sticker::PI_2, glm::dvec3(1.0L, 0.0L, 0.0L));
 
-			// Verde
 			type = Sticker::GREEN;
-			color = glm::dvec4(0.0L, 0.8L, 0.0L, 1.0L);
+			setColor(0.0F, 0.8F, 0.0F);
 			break;
 
-		// Atras
+		// Atras     | Azul
 		case Sticker::BACK:
 			pos.z = -Sticker::scale;
 			rot = glm::angleAxis(-Sticker::PI_2, glm::dvec3(1.0L, 0.0L, 0.0L));
 
-			// Azul
 			type = Sticker::BLUE;
-			color = glm::dvec4(0.0L, 0.0L, 0.8L, 1.0L);
+			setColor(0.0F, 0.0F, 0.8F);
 			break;
 
 		// Ninguno
 		case Sticker::NONE:
 			type = Sticker::BLACK;
-			color = glm::dvec4(0.0L, 0.0L, 0.0L, 1.0L);
+			setColor(0.0F, 0.0F, 0.0F);
 			break;
 	}
-
-	// Material
-	ambient[0] = ambient[1] = ambient[2] = 0.5F; ambient[3] = 1.0F;
-	diffuse[0] = color.r; diffuse[1] = color.g; diffuse[2] = color.b; diffuse[3] = 1.0F;
-	specular[0] = specular[1] = specular[2] = 0.2F; specular[3] = 1.0F;
-	shininess = 64.0L;
 }
 
 // Dibujar
@@ -157,11 +152,24 @@ void Sticker::turn(const Sticker::AXIS &dir)
 		(dir == Sticker::Y1 && side == Sticker::RIGHT)) {side = Sticker::BACK;  return;}
 }
 
+// Asigna el VAO
+void Sticker::setVAO (VAO *const sticker)
+{
+	Sticker::vao = sticker;
+}
+
 // Asigna el color
 void Sticker::setColor (const GLfloat &r, const GLfloat &g, const GLfloat &b)
 {
 	color.r = r;
 	color.g = g;
 	color.b = b;
+	color.a = 1.0F;
+
+	// Material
+	diffuse[0] = color.r;
+	diffuse[1] = color.g;
+	diffuse[2] = color.b;
+	diffuse[3] = 1.0F;
 }
 

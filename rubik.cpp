@@ -38,6 +38,9 @@ Rubik::Rubik (const std::string &path, const GLdouble &fovy) : fov(fovy), dim(3)
 	cube_vao = new VAO(path + "/roundedcube_flat.obj");
 	sticker_vao = new VAO(path + "/sticker.obj");
 
+	Cube::setVAO(cube_vao);
+	Sticker::setVAO(sticker_vao);
+
 	// Construye los cubos
 	for (unsigned char i = 0, x = 0, y = 0, z = 0, loc = 0; i < 27; i++)
 	{
@@ -45,8 +48,11 @@ Rubik::Rubik (const std::string &path, const GLdouble &fovy) : fov(fovy), dim(3)
 		loc = (x << 4) | (y << 2) | z;
 		if (++x == dim) {x = 0; if (++y == dim) {y = 0; z++;}}
 
-		cube[i] = new Cube(cube_vao, sticker_vao, loc, glm::vec4(0.0F, 0.0F, 0.0F, 0.1F));
+		cube[i] = new Cube(loc);
 	}
+
+	// Minicubo guia
+	//minicube = new Cube();
 }
 
 // Dibujar modelo

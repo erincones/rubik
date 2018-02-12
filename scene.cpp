@@ -5,6 +5,7 @@ Scene::Scene(const std::string &path, const glm::vec4 &sceneColor) : vao(NULL), 
 {
 	// Cargar modelo del escenario
 	vao = new VAO(path + "/scene.obj");
+	texture = new Texture(path + "/background.png");
 
 	// Posicion
 	pos = glm::dvec3(0.0L, 0.0L, -10.5L);
