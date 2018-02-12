@@ -215,10 +215,13 @@ int main(int argc, char **argv)
 	glutKeyboardFunc(keyboard);
 	glutCloseFunc(close);
 
-	// Construir cubo y escenario
+	// Obtiene directorio de archivos
 	std::string path = argv[0];
 	path.erase(path.find_last_of("/\\"));
+	path.erase(path.find_last_of("/\\"));
+	path += "/Files";
 
+	// Construir cubo y escenario
 	cube = new Rubik(path, fov);
 	scene = new Scene(path, glm::dvec4(0.70L, 0.70L, 0.8L, 0.1L));
 	scene->setTexture(path + "/background.png");
