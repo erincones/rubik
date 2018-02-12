@@ -25,7 +25,7 @@ class Cube
 		double angle;
 
 		// Vertex Array Object
-		static VAO *vao;
+		const VAO *vao;
 
 		// Ubicacion y rotacion
 		glm::dvec3 pos;
@@ -33,11 +33,11 @@ class Cube
 		glm::dquat rot_1;
 
 		// Material
-		static glm::vec4 color;
-		static GLfloat ambient[4];
-		static GLfloat diffuse[4];
-		static GLfloat specular[4];
-		static GLfloat shininess;
+		glm::vec4 color;
+		GLfloat ambient[4];
+		GLfloat diffuse[4];
+		GLfloat specular[4];
+		GLfloat shininess;
 
 		// Etiquetas de color
 		Sticker *face_x;
@@ -58,17 +58,13 @@ class Cube
 		};
 
 		// Constructor
-		Cube (const GLubyte &location);
-		Cube ();
+		Cube (const VAO *const cube, const VAO *const sticker, const GLubyte &location, const glm::vec4 &colorRGBA);
 
 		// Dibujar
 		void draw () const;
 
-		// Asigna el VAO
-		static void setVAO (VAO *const cube);
-
 		// Asigna el color
-		static void setColor (const GLfloat &r, const GLfloat &g, const GLfloat &b);
+		void setColor (const GLfloat &r, const GLfloat &g, const GLfloat &b);
 
 		// Valida la direccion de caras visibles
 		bool face (const Sticker::FACE &side) const;

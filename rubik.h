@@ -59,9 +59,6 @@ class Rubik
 		unsigned int dim;
 		Cube *cube[27];
 
-		// Minicubo guia
-		Cube *minicube;
-
 		// Vertex Array Objects
 		VAO *cube_vao;
 		VAO *sticker_vao;

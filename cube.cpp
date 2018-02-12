@@ -6,17 +6,7 @@ const GLdouble Cube::gap   = 0.0025L;
 const double   Cube::PI_2  = 1.57079632679489661923;
 const double   Cube::step  = Cube::PI_2 / (60.0 / 5.0);
 
-// Geometria y material
-VAO *Cube::vao = NULL;
-glm::vec4 Cube::color = glm::vec4(0.00F, 0.00F, 0.00F, 1.0F);
-GLfloat Cube::ambient[4]  =      {0.00F, 0.00F, 0.00F, 1.0F};
-GLfloat Cube::diffuse[4]  =      {0.10F, 0.10F, 0.10F, 1.0F};
-GLfloat Cube::specular[4] =      {0.75F, 0.75F, 0.75F, 1.0F};
-GLfloat Cube::shininess   =       64.0F;
-
-
-// Constructor
-Cube::Cube (const GLubyte &location) : angle(0.0), face_x(NULL), face_y(NULL), face_z(NULL)
+Cube::Cube (const VAO *const cube, const VAO *const sticker, const GLubyte &location, const glm::vec4 &colorRGBA) : angle(0.0), vao(cube), color(colorRGBA), face_x(NULL), face_y(NULL), face_z(NULL)
 {
 	// Ubicacion en el eje x
 	GLubyte axis = location >> 4;
@@ -24,16 +14,16 @@ Cube::Cube (const GLubyte &location) : angle(0.0), face_x(NULL), face_y(NULL), f
 	{
 		case 0: // Izquierda
 			pos.x = -Cube::scale - Cube::gap;
-			face_x = new Sticker(Sticker::LEFT);
+			face_x = new Sticker(sticker, Sticker::LEFT);
 			break;
 
 		case 2: // Derecha
 			pos.x = Cube::scale + Cube::gap;
-			face_x = new Sticker(Sticker::RIGHT);
+			face_x = new Sticker(sticker, Sticker::RIGHT);
 			break;
 
 		default: // Ninguno
-			face_x = new Sticker();
+			face_x = new Sticker(NULL);
 			break;
 	}
 
@@ -43,16 +33,16 @@ Cube::Cube (const GLubyte &location) : angle(0.0), face_x(NULL), face_y(NULL), f
 	{
 		case 0: // Arriba
 			pos.y = Cube::scale + Cube::gap;
-			face_y = new Sticker(Sticker::UP);
+			face_y = new Sticker(sticker, Sticker::UP);
 			break;
 
 		case 2: // Abajo
 			pos.y = -Cube::scale - Cube::gap;
-			face_y = new Sticker(Sticker::DOWN);
+			face_y = new Sticker(sticker, Sticker::DOWN);
 			break;
 
 		default: // Ninguno
-			face_y = new Sticker();
+			face_y = new Sticker(NULL);
 			break;
 	}
 
@@ -62,22 +52,26 @@ Cube::Cube (const GLubyte &location) : angle(0.0), face_x(NULL), face_y(NULL), f
 	{
 		case 0: // Frente
 			pos.z = Cube::scale + Cube::gap;
-			face_z = new Sticker(Sticker::FRONT);
+			face_z = new Sticker(sticker, Sticker::FRONT);
 			break;
 
 		case 2: // Atras
 			pos.z = -Cube::scale - Cube::gap;
-			face_z = new Sticker(Sticker::BACK);
+			face_z = new Sticker(sticker, Sticker::BACK);
 			break;
 
 		default: // Ninguno
-			face_z = new Sticker();
+			face_z = new Sticker(NULL);
 			break;
 	}
+
+	// Material
+	ambient[0] = ambient[1] = ambient[2] = 0.0F; ambient[3] = 1.0F;
+	diffuse[0] = diffuse[1] = diffuse[2] = 0.1F; diffuse[3] = 1.0F;
+	specular[0] = specular[1] = specular[2] = 0.75F; specular[3] = 1.0F;
+	shininess = 64.0L;
 }
 
-
-// Dibujar
 void Cube::draw() const
 {
 	// Cubo central no se dibuja
@@ -107,12 +101,6 @@ void Cube::draw() const
 
 	// Regresa a la matriz anterior
 	glPopMatrix();
-}
-
-// Asigna el VAO
-void Cube::setVAO(VAO *const cube)
-{
-	vao = cube;
 }
 
 // Asigna color
