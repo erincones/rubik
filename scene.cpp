@@ -1,7 +1,7 @@
 #include <scene.h>
 
 // Constructor
-Scene::Scene(const std::string &path) : vao(NULL), texture(NULL)
+Scene::Scene (const std::string &path) : vao(NULL), texture(NULL)
 {
 	// Cargar modelo del escenario
 	vao = new VAO(path + "/scene.obj");
@@ -78,7 +78,7 @@ void Scene::draw () const
 }
 
 // Animar escena
-void Scene::animate()
+void Scene::animate ()
 {
 	rot = glm::angleAxis(0.0005, glm::dvec3(0.0, 1.0, 0.0)) * rot;
 }
