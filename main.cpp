@@ -223,8 +223,7 @@ int main(int argc, char **argv)
 
 	// Construir cubo y escenario
 	cube = new Rubik(path, fov);
-	scene = new Scene(path, glm::dvec4(0.70L, 0.70L, 0.8L, 0.1L));
-	scene->setTexture(path + "/background.png");
+	scene = new Scene(path);
 
 	// Loop principal de GLUT
 	glutMainLoop();

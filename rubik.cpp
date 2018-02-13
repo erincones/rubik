@@ -30,9 +30,8 @@ glm::dvec3 Rubik::projectToSphere (const int &x, const int &y)
 Rubik::Rubik (const std::string &path, const GLdouble &fovy) : fov(fovy), dim(3), cube_vao(NULL), sticker_vao(NULL)
 {
 	// Posicion y rotacion inicial
-	pos_1 = glm::dvec3( 0.0L,   0.0L, -12.5L);
-	rot   = glm::dquat(-0.96, -0.21L, 0.17L, 0.04);
-
+	pos_1 = glm::dvec3( 0.00,  0.00, -12.5);
+	rot   = glm::dquat(-0.96, -0.21,  0.17, 0.04);
 
 	// Cargar modelos de los cubos y las etiquetas
 	cube_vao = new VAO(path + "/roundedcube_flat.obj");
@@ -45,7 +44,7 @@ Rubik::Rubik (const std::string &path, const GLdouble &fovy) : fov(fovy), dim(3)
 		loc = (x << 4) | (y << 2) | z;
 		if (++x == dim) {x = 0; if (++y == dim) {y = 0; z++;}}
 
-		cube[i] = new Cube(cube_vao, sticker_vao, loc, glm::vec4(0.0F, 0.0F, 0.0F, 0.1F));
+		cube[i] = new Cube(cube_vao, sticker_vao, loc);
 	}
 }
 

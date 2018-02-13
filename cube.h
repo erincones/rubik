@@ -58,19 +58,16 @@ class Cube
 		};
 
 		// Constructor
-		Cube (const VAO *const cube, const VAO *const sticker, const GLubyte &location, const glm::vec4 &colorRGBA);
+		Cube (const VAO *const cube, const VAO *const sticker, const GLubyte &location);
 
 		// Dibujar
 		void draw () const;
-
-		// Asigna el color
-		void setColor (const GLfloat &r, const GLfloat &g, const GLfloat &b);
 
 		// Valida la direccion de caras visibles
 		bool face (const Sticker::FACE &side) const;
 
 		// Obtiene el color de la cara
-		Sticker::COLOR tone (const Sticker::FACE &side);
+		Sticker::COLOR tone (const Sticker::FACE &side) const;
 
 		// Rotar y animar cubo
 		void turn (const Cube::AXIS &dir);

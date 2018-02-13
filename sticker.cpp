@@ -157,11 +157,3 @@ void Sticker::turn(const Sticker::AXIS &dir)
 		(dir == Sticker::Y1 && side == Sticker::RIGHT)) {side = Sticker::BACK;  return;}
 }
 
-// Asigna el color
-void Sticker::setColor (const GLfloat &r, const GLfloat &g, const GLfloat &b)
-{
-	color.r = r;
-	color.g = g;
-	color.b = b;
-}
-

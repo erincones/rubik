@@ -23,14 +23,11 @@ class Texture
 
 	public:
 		// Constructor
-		Texture (const std::string &path);
+		Texture (const std::string &path = "");
 
 		// Habilita y desabilita la textura
 		void enable () const;
 		void disable () const;
-
-		// Comprueba si es una textura valida
-		bool valid () const;
 
 		// Destructor
 		~Texture ();

@@ -23,19 +23,22 @@ void Texture::build (GLubyte *const image)
 }
 
 // Constructor
-Texture::Texture (const std::string &path) : texture(0)
+Texture::Texture (const std::string &path) : texture(0), width(0), height(0)
 {
-	// Lee la textura
-	GLubyte *image = SOIL_load_image(path.c_str(), &width, &height, 0, SOIL_LOAD_RGBA);
+	if (!path.empty())
+	{
+		// Lee la textura
+		GLubyte *const image = SOIL_load_image(path.c_str(), &width, &height, 0, SOIL_LOAD_RGBA);
 
-	// Validacion de la lectura del archivo
-	if (image == NULL) std::cerr << "Error: no se puede abrir `" << path << "'." << std::endl;
-
-	// Se construye la textura
-	else build(image);
-
-	// Libera memoria
-	SOIL_free_image_data(image);
+		// Validacion de la lectura del archivo
+		if (image == NULL) std::cerr << "Error: no se puede abrir `" << path << "'." << std::endl;
+		else
+		{
+			// Se construye la textura y libera memoria de la imagen leida
+			build(image);
+			SOIL_free_image_data(image);
+		}
+	}
 }
 
 // Habilita la textura
@@ -50,12 +53,6 @@ void Texture::disable () const
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-// Obtiene el ID de la textura
-bool Texture::valid () const
-{
-	return texture != 0;
-}
-
 // Destructor
 Texture::~Texture()
 {
@@ -64,6 +61,8 @@ Texture::~Texture()
 
 	// Resetea valores por defecto
 	texture = 0;
+	width  = 0;
+	height = 0;
 }
 
 

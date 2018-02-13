@@ -6,7 +6,7 @@ const GLdouble Cube::gap   = 0.0025L;
 const double   Cube::PI_2  = 1.57079632679489661923;
 const double   Cube::step  = Cube::PI_2 / (60.0 / 5.0);
 
-Cube::Cube (const VAO *const cube, const VAO *const sticker, const GLubyte &location, const glm::vec4 &colorRGBA) : angle(0.0), vao(cube), color(colorRGBA), face_x(NULL), face_y(NULL), face_z(NULL)
+Cube::Cube (const VAO *const cube, const VAO *const sticker, const GLubyte &location) : angle(0.0), vao(cube), face_x(NULL), face_y(NULL), face_z(NULL)
 {
 	// Ubicacion en el eje x
 	GLubyte axis = location >> 4;
@@ -66,6 +66,7 @@ Cube::Cube (const VAO *const cube, const VAO *const sticker, const GLubyte &loca
 	}
 
 	// Material
+	color = glm::vec4(0.0F, 0.0F, 0.0F, 0.1F);
 	ambient[0] = ambient[1] = ambient[2] = 0.0F; ambient[3] = 1.0F;
 	diffuse[0] = diffuse[1] = diffuse[2] = 0.1F; diffuse[3] = 1.0F;
 	specular[0] = specular[1] = specular[2] = 0.75F; specular[3] = 1.0F;
@@ -103,14 +104,6 @@ void Cube::draw() const
 	glPopMatrix();
 }
 
-// Asigna color
-void Cube::setColor (const GLfloat &r, const GLfloat &g, const GLfloat &b)
-{
-	color.r = r;
-	color.g = g;
-	color.b = b;
-}
-
 // Valida la direccion de caras visibles
 bool Cube::face (const Sticker::FACE &side) const
 {
@@ -118,7 +111,7 @@ bool Cube::face (const Sticker::FACE &side) const
 }
 
 // Retorna el color de una cara
-Sticker::COLOR Cube::tone(const Sticker::FACE &side)
+Sticker::COLOR Cube::tone(const Sticker::FACE &side) const
 {
 	if (face_x->face() == side) return face_x->tone();
 	if (face_y->face() == side) return face_y->tone();

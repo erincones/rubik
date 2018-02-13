@@ -40,7 +40,7 @@ class Scene
 
 	public:
 		// Constructor
-		Scene (const std::string &path, const glm::vec4 &sceneColor = glm::vec4());
+		Scene (const std::string &path);
 
 		// Asignar textura
 		bool setTexture (const std::string &path);

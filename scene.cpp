@@ -1,16 +1,18 @@
 #include <scene.h>
 
 // Constructor
-Scene::Scene(const std::string &path, const glm::vec4 &sceneColor) : vao(NULL), texture(NULL), color(sceneColor)
+Scene::Scene(const std::string &path) : vao(NULL), texture(NULL)
 {
 	// Cargar modelo del escenario
 	vao = new VAO(path + "/scene.obj");
+	texture = new Texture(path + "/background.png");
 
 	// Posicion
 	pos = glm::dvec3(0.0L, 0.0L, -10.5L);
 
 
 	// Material
+	color = glm::vec4(0.70L, 0.70L, 0.8L, 0.1L);
 	scene_ambient[0] = scene_ambient[1] = scene_ambient[2] = 1.0F; scene_ambient[3] = 1.0F;
 	scene_diffuse[0] = scene_diffuse[1] = scene_diffuse[2] = 1.0F; scene_diffuse[3] = 1.0F;
 	scene_specular[0] = scene_specular[1] = scene_specular[2] = 0.0F; scene_specular[3] = 1.0F;
@@ -38,18 +40,6 @@ Scene::Scene(const std::string &path, const glm::vec4 &sceneColor) : vao(NULL), 
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_MULTISAMPLE);
-}
-
-// Asigna una textura
-bool Scene::setTexture (const std::string &path)
-{
-	// Elimina la textura anterior
-	if (texture != NULL) delete texture;
-
-	// Crea la textura nueva
-	texture = new Texture(path);
-
-	return texture->valid();
 }
 
 // Dibujar

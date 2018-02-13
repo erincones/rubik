@@ -75,9 +75,6 @@ class Sticker
 
 		// Rotar cara
 		void turn (const Sticker::AXIS &dir);
-
-		// Asigna el color
-		void setColor (const GLfloat &r, const GLfloat &g, const GLfloat &b);
 };
 
 #endif // STICKER_H
