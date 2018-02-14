@@ -3,6 +3,7 @@
 
 #include <sticker.h>
 #include <vao.h>
+#include <texture.h>
 
 #include <GL/glew.h>
 #include <GL/freeglut.h>
@@ -25,7 +26,8 @@ class Cube
 		double angle;
 
 		// Vertex Array Object
-		const VAO *vao;
+		VAO *const vao_sd;
+		VAO *const vao_hd;
 
 		// Ubicacion y rotacion
 		glm::dvec3 pos;
@@ -58,7 +60,7 @@ class Cube
 		};
 
 		// Constructor
-		Cube (const VAO *const cube, const VAO *const sticker, const GLubyte &location);
+		Cube (const GLubyte &location = 0x15, VAO *const cube_sd = NULL, VAO *const cube_hd = NULL, VAO *const sticker = NULL);
 
 		// Dibujar
 		void draw () const;
@@ -76,6 +78,9 @@ class Cube
 
 		// Destructor
 		~Cube ();
+
+		// Clase amiga Rubik
+		friend class Rubik;
 };
 
 #endif // CUBE_H

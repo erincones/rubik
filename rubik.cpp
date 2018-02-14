@@ -1,19 +1,19 @@
 #include <rubik.h>
 
 // Inicializa variabes estaticas
-const GLdouble Rubik::fov_factor = 3.141592653589793238462643383279502884L / 360.0L;
-const GLdouble Rubik::PI_2       = 1.570796326794896619231321691639751442L;
+const GLdouble  Rubik::fov_factor = 3.141592653589793238462643383279502884L / 360.0L;
+const GLdouble  Rubik::PI_2       = 1.570796326794896619231321691639751442L;
 
 
 // Proyectar vector en esfera
-glm::dvec3 Rubik::projectToSphere (const int &x, const int &y)
+glm::dvec3 Rubik::projectToSphere (const GLdouble &x, const GLdouble &y)
 {
-	const GLdouble w = (GLdouble) glutGet(GLUT_WINDOW_WIDTH);
-	const GLdouble h = (GLdouble) glutGet(GLUT_WINDOW_HEIGHT);
+	const GLdouble w = (GLdouble) width;
+	const GLdouble h = (GLdouble) height;
 
 	// Ubicacion en el plano
-	const GLdouble sph_x = (2.0L * (GLdouble) x - w) / w;
-	const GLdouble sph_y = (h - 2.0L * (GLdouble) y) / h;
+	const GLdouble sph_x = (2.0L * x - w) / w;
+	const GLdouble sph_y = (h - 2.0L * y) / h;
 
 	// Magnitud del vector
 	const GLdouble d = glm::length(glm::dvec2(sph_x, sph_y));
@@ -27,25 +27,39 @@ glm::dvec3 Rubik::projectToSphere (const int &x, const int &y)
 
 
 // Constructor
-Rubik::Rubik (const std::string &path, const GLdouble &fovy) : fov(fovy), dim(3), cube_vao(NULL), sticker_vao(NULL)
+Rubik::Rubik (const std::string &path) : dim(3), sticker_vao(NULL), cube_flat_vao(NULL), cube_smooth_vao(NULL)
 {
 	// Posicion y rotacion inicial
 	pos_1 = glm::dvec3( 0.00,  0.00, -12.5);
 	rot   = glm::dquat(-0.96, -0.21,  0.17, 0.04);
 
 	// Cargar modelos de los cubos y las etiquetas
-	cube_vao = new VAO(path + "/roundedcube_flat.obj");
-	sticker_vao = new VAO(path + "/sticker.obj");
+	sticker_vao     = new VAO(path + "/sticker.obj");
+	cube_flat_vao   = new VAO(path + "/roundedcube_flat.obj");
+	cube_smooth_vao = new VAO(path + "/roundedcube_smooth.obj");
+
+	// Construye el minicubo
+	minicube = new Minicube(path, &rot, cube_flat_vao, cube_smooth_vao, sticker_vao);
 
 	// Construye los cubos
-	for (unsigned char i = 0, x = 0, y = 0, z = 0, loc = 0; i < 27; i++)
+	for (GLubyte i = 0, x = 0, y = 0, z = 0, location = 0; i < 27; i++)
 	{
 		// Localizacion
-		loc = (x << 4) | (y << 2) | z;
+		location = (x << 4) | (y << 2) | z;
 		if (++x == dim) {x = 0; if (++y == dim) {y = 0; z++;}}
 
-		cube[i] = new Cube(cube_vao, sticker_vao, loc);
+		cube[i] = new Cube(location, cube_flat_vao, cube_smooth_vao, sticker_vao);
 	}
+}
+
+// Asigna la informacion de la pantalla
+void Rubik::setScreenInfo (const GLint &screen_width, const GLint &screen_height, const GLdouble &fovy, const GLdouble &zNear, const GLdouble &zFar)
+{
+	fov    = fovy;
+	width  = screen_width;
+	height = screen_height;
+
+	minicube->setScreenInfo(screen_width, screen_height, fovy, zNear, zFar);
 }
 
 // Dibujar modelo
@@ -64,6 +78,10 @@ void Rubik::draw () const
 
 	// Regresa a la matriz anterior
 	glPopMatrix();
+
+
+	// Dibuja el minicubo
+	minicube->draw();
 }
 
 // Animar rotacion
@@ -104,7 +122,7 @@ void Rubik::drag_0 (const int &x, const int &y)
 void Rubik::drag_1 (const int &x, const int &y)
 {
 	// Desplazamiento del mouse y plano
-	const GLdouble scale = (GLdouble) glm::min(glutGet(GLUT_WINDOW_WIDTH), glutGet(GLUT_WINDOW_HEIGHT)) / 2.0L;
+	const GLdouble scale = (GLdouble) glm::min(width, height) / 2.0L;
 	const GLdouble dx = (GLdouble) (x - pos_0.x) / scale;
 	const GLdouble dy = (GLdouble) (y - pos_0.y) / scale;
 	const GLdouble dz = glm::tan(fov * Rubik::fov_factor) * (pos_1.z == 0.0L ? 0.01L : glm::abs(pos_1.z));
@@ -121,14 +139,14 @@ void Rubik::drag_1 (const int &x, const int &y)
 // Click inicial al rotar
 void Rubik::rotate_0 (const int &x, const int &y)
 {
-	point_0 = Rubik::projectToSphere(x, y);
+	point_0 = projectToSphere((GLdouble) x, (GLdouble) y);
 }
 
 // Actualizar rotacion al arrastrar
 void Rubik::rotate_1 (const int &x, const int &y)
 {
 	// Vector final
-	point_1 = projectToSphere(x, y);
+	point_1 = projectToSphere((GLdouble) x, (GLdouble) y);
 
 	// Angulo
 	double angle = glm::length(point_1 - point_0);
@@ -179,7 +197,7 @@ void Rubik::play (const Rubik::STEP &step)
 	}
 
 	// Obtiene los cubos a rotar y actualiza las caras
-	for (unsigned char i = 0; i < 27; i++)
+	for (GLubyte i = 0; i < 27; i++)
 	{
 		if (cube[i]->face(face))
 		{
@@ -191,6 +209,9 @@ void Rubik::play (const Rubik::STEP &step)
 	// Encola el movimiento
 	move.push(next_move);
 	target.push(selection);
+
+	// Imprime el estado
+	print();
 }
 
 // Cubo armado
@@ -198,22 +219,23 @@ bool Rubik::win () const
 {
 	// Nueve colores por seis caras
 	Sticker::COLOR color[6][9] = {Sticker::WHITE};
-	unsigned char ind[6] = {0};
+	GLubyte ind[6] = {0};
 
 	// Para cada cubo
-	for (unsigned int i = 0; i < 27; i++)
+	for (GLubyte i = 0; i < 27; i++)
 	{
 		// Identifica las caras
-		for (Sticker::FACE face = Sticker::UP; face != Sticker::NONE; face = (Sticker::FACE) ((int) face + 1))
+		for (GLubyte j = 0; j < 6; j++)
 		{
+			const Sticker::FACE face = (Sticker::FACE) j;
 			if (cube[i]->face(face))
 			{
 				// Almacena el color en la cara
-				color[face][ind[face]] = cube[i]->tone(face);
-				ind[face]++;
+				color[j][ind[j]] = cube[i]->tone(face);
+				ind[j]++;
 
 				// Verifica si es del mismo color que los otros cubos de la cara
-				if ((ind[face] > 1) && (color[face][ind[face] - 2] != color[face][ind[face] - 1])) return false;
+				if ((ind[j] > 1) && (color[j][ind[j] - 2] != color[j][ind[j] - 1])) return false;
 			}
 		}
 	}
@@ -224,7 +246,7 @@ bool Rubik::win () const
 // Destructor
 Rubik::~Rubik()
 {
-	delete cube_vao;
+	delete cube_flat_vao;
 	delete sticker_vao;
 
 	for (int i = 0; i < 26; i++) delete cube[i];

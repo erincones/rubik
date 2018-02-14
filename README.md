@@ -10,6 +10,7 @@ Cubo Rubik en OpenGL para el proyecto final de Introducción a la Computación G
 * Modelo de iluminación Gouraud.
 * Mapeo de texturas.
 * Animaciones independientes de los FPS.
+* Mini cubo guía para orientación.
 * Interacción con mouse.
   * Rotación con cuaterniones: Arrastrar con click izquierdo.
   * Click and drag: Arrastrar con click derecho.
@@ -21,7 +22,6 @@ Cubo Rubik en OpenGL para el proyecto final de Introducción a la Computación G
 
 ### Por hacer
 
-* Mini cubo guía para orientación.
 * Mostrar controles.
 * Mostrar número de pasos.
 * Temporizador.

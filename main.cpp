@@ -21,8 +21,12 @@
 const GLdouble fov_factor = 3.141592653589793238462643383279502884L / 360.0L;
 
 
-// Campo de vision
+// Informacion de pantalla
+GLint width = 800;
+GLint height = 600;
 GLdouble fov = 45.0L;
+GLdouble far = 100.0L;
+GLdouble near = 1.0L;
 
 // Objetos
 Rubik *cube = NULL;
@@ -32,7 +36,7 @@ Scene *scene = NULL;
 const GLint tick = 1000 / 60;
 const GLint skip = 10;
 GLint game_ms = 0;
-GLint loop = 0;
+GLint loops = 0;
 
 // Contador de fps
 GLint fps_ms = 0;
@@ -60,16 +64,23 @@ void perspective (const GLdouble &fovy, const GLdouble &aspect, const GLdouble &
 // Redimensionar ventana
 void reshape (int w, int h)
 {
+	// Actualiza las dimensiones de la pantalla
+	width = w;
+	height = h;
+
 	// Ajusta el viewport a las dimensiones de la ventana
 	glViewport(0, 0, (GLsizei) w, (GLsizei) h);
 
 	// Reestablece la patriz de proyeccion
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	perspective(fov, (GLdouble) w / (GLdouble) h, 1.0L, 150.0L);
+	perspective(fov, (GLdouble) w / (GLdouble) h, near, far);
 
 	// Regresa a la matriz del modelo
 	glMatrixMode(GL_MODELVIEW);
+
+	// Actualiza la informacion de la pantalla de los objetos
+	cube->setScreenInfo(width, height, fov, near, far);
 }
 
 // Dibujar escena
@@ -94,13 +105,13 @@ void display ()
 void idle ()
 {
 	// Actualizar juego
-	loop = 0;
-	if ((glutGet(GLUT_ELAPSED_TIME) >= game_ms) && (loop < skip))
+	loops = 0;
+	if ((glutGet(GLUT_ELAPSED_TIME) >= game_ms) && (loops < skip))
 	{
 		scene->animate();
 		cube->animate();
 
-		loop = 0;
+		loops = 0;
 		game_ms += tick;
 	}
 
@@ -196,8 +207,8 @@ int main(int argc, char **argv)
 	// Inicializar GLUT
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH | GLUT_MULTISAMPLE);
-	glutInitWindowPosition((glutGet(GLUT_SCREEN_WIDTH) - 800) >> 1, (glutGet(GLUT_SCREEN_HEIGHT) - 600) >> 1);
-	glutInitWindowSize(800, 600);
+	glutInitWindowPosition((glutGet(GLUT_SCREEN_WIDTH) - width) >> 1, (glutGet(GLUT_SCREEN_HEIGHT) - height) >> 1);
+	glutInitWindowSize(width, height);
 	glutCreateWindow("Rubik");
 	glutCreateMenu(NULL);
 
@@ -215,15 +226,18 @@ int main(int argc, char **argv)
 	glutKeyboardFunc(keyboard);
 	glutCloseFunc(close);
 
+
 	// Obtiene directorio de archivos
 	std::string path = argv[0];
 	path.erase(path.find_last_of("/\\"));
 	path.erase(path.find_last_of("/\\"));
 	path += "/Files";
 
+
 	// Construir cubo y escenario
-	cube = new Rubik(path, fov);
+	cube = new Rubik(path);
 	scene = new Scene(path);
+
 
 	// Loop principal de GLUT
 	glutMainLoop();

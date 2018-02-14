@@ -2,6 +2,7 @@
 #define STICKER_H
 
 #include <vao.h>
+#include <texture.h>
 
 #include <GL/glew.h>
 #include <GL/freeglut.h>
@@ -44,8 +45,9 @@ class Sticker
 		static const double PI_2;
 		static const double PI;
 
-		// Vertex Array Object
-		const VAO *vao;
+		// Vertex Array Object y textura
+		VAO *vao;
+		Texture *texture;
 
 		// Color, ubicacion y rotacion
 		glm::dvec3 pos;
@@ -64,7 +66,7 @@ class Sticker
 
 	public:
 		// Constructor
-		Sticker (const VAO *const object, const Sticker::FACE &dir = Sticker::NONE);
+		Sticker (const Sticker::FACE &dir = Sticker::NONE, VAO *const sticker = NULL, Texture *const img = NULL);
 
 		// Dibujar
 		void draw () const;
@@ -75,6 +77,11 @@ class Sticker
 
 		// Rotar cara
 		void turn (const Sticker::AXIS &dir);
+
+		// Clase amiga Cube, Rubik y Minicube
+		friend class Cube;
+		friend class Rubik;
+		friend class Minicube;
 };
 
 #endif // STICKER_H

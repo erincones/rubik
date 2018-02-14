@@ -1,6 +1,7 @@
 #ifndef RUBIK_H
 #define RUBIK_H
 
+#include <minicube.h>
 #include <sticker.h>
 #include <cube.h>
 #include <vao.h>
@@ -43,6 +44,11 @@ class Rubik
 		static const GLdouble fov_factor;
 		static const GLdouble PI_2;
 
+		// Informacion de pantalla
+		GLint width;
+		GLint height;
+		GLdouble fov;
+
 		// Posicion
 		glm::dvec3 pos_0;
 		glm::dvec3 pos_1;
@@ -52,16 +58,18 @@ class Rubik
 		glm::dvec3 point_0;
 		glm::dvec3 point_1;
 
-		// Campo visual
-		GLdouble fov;
 
 		// Datos
 		unsigned int dim;
 		Cube *cube[27];
 
+		// Minicubo
+		Minicube *minicube;
+
 		// Vertex Array Objects
-		VAO *cube_vao;
 		VAO *sticker_vao;
+		VAO *cube_flat_vao;
+		VAO *cube_smooth_vao;
 
 		// Cola de rotaciones
 		std::queue<Cube::AXIS> move;
@@ -69,13 +77,16 @@ class Rubik
 
 
 		// Proyectar punto en esfera
-		static glm::dvec3 projectToSphere (const int &x, const int &y);
+		glm::dvec3 projectToSphere (const GLdouble &x, const GLdouble &y);
 
 
 
 	public:
 		// Constructor
-		Rubik (const std::string &path, const GLdouble &fov = 45.0L);
+		Rubik (const std::string &path);
+
+		// Asigna la informacion de la pantalla
+		void setScreenInfo (const GLint &screen_width, const GLint &screen_height, const GLdouble &fovy, const GLdouble &zNear, const GLdouble &zFar);
 
 		// Dibujar
 		void draw () const;

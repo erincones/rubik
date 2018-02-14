@@ -6,7 +6,7 @@ const double Sticker::PI_2 = 1.57079632679489661923;
 const double Sticker::PI   = 3.14159265358979323846;
 
 // Constructor
-Sticker::Sticker (const VAO *const object, const FACE &dir) : vao(object), side(dir)
+Sticker::Sticker (const FACE &dir, VAO *const sticker, Texture *const img) : vao(sticker), texture(img), side(dir)
 {
 	switch (side)
 	{
@@ -103,7 +103,9 @@ void Sticker::draw () const
 	glMaterialfv(GL_FRONT, GL_SHININESS, &shininess);
 
 	// Dibujar objeto
+	if (texture != NULL) texture->enable();
 	vao->draw();
+	if (texture != NULL) texture->disable();
 
 	// Regresa a la matriz anterior
 	glPopMatrix();
