@@ -159,3 +159,10 @@ void Sticker::turn(const Sticker::AXIS &dir)
 		(dir == Sticker::Y1 && side == Sticker::RIGHT)) {side = Sticker::BACK;  return;}
 }
 
+// Asigna el color
+void Sticker::setColor(const glm::vec4 &tone)
+{
+	color = tone;
+	diffuse[0] = color.r; diffuse[1] = color.g; diffuse[2] = color.b; diffuse[3] = 1.0F;
+}
+

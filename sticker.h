@@ -78,6 +78,9 @@ class Sticker
 		// Rotar cara
 		void turn (const Sticker::AXIS &dir);
 
+		// Asignar color
+		void setColor (const glm::vec4 &tone);
+
 		// Clase amiga Cube, Rubik y Minicube
 		friend class Cube;
 		friend class Rubik;

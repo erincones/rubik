@@ -43,7 +43,8 @@ Minicube::Minicube (const std::string &path, glm::dquat *const parent_rot, VAO *
 		const Sticker::FACE dir = (Sticker::FACE) i;
 
 		texture[i] = new Texture(path + "/minicube_" + std::string(1, i + '0') + ".png");
-		face[i]    = new Sticker(dir, sticker, texture[i]);
+		face[i] = new Sticker(dir, sticker, texture[i]);
+		face[i]->setColor(glm::vec4(1.0F));
 	}
 
 	// Material
