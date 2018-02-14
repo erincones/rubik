@@ -9,7 +9,8 @@ SOURCES += main.cpp \
     sticker.cpp \
     vao.cpp \
     texture.cpp \
-    minicube.cpp
+    minicube.cpp \
+    object.cpp
 
 INCLUDEPATH += $$PWD/include
 DEPENDPATH += $$PWD/include
@@ -23,7 +24,8 @@ HEADERS += \
     sticker.h \
 	vao.h \
     texture.h \
-    minicube.h
+    minicube.h \
+    object.h
 
 DISTFILES += \
     README.md
