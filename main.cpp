@@ -201,6 +201,7 @@ void keyboard (unsigned char key, int, int)
 // Al finalizar la aplicacion
 void close ()
 {
+	delete light;
 	delete scene;
 	delete rubik;
 	delete minicube;
