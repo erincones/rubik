@@ -7,8 +7,8 @@ Minicube::Minicube (Object *parent) : Cube()
 	ortho = true;
 
 	// Posicion, escala y rotacion
-	offset  = glm::vec2(75.0F, 75.0F);
-	scale_1 = glm::vec3(50.0F);
+	offset  = glm::vec2((GLfloat) Object::win_h * 0.080F);
+	scale_1 = glm::vec3((GLfloat) Object::win_h * 0.075F);
 	rot_ref = parent->rotPointer();
 
 	// Crea cada calcomania con las texturas
@@ -30,6 +30,11 @@ Minicube::Minicube (Object *parent) : Cube()
 // Asigna la informacion de la pantalla
 void Minicube::updatePosition ()
 {
+	// Actualiza valores
+	offset  = glm::vec2((GLfloat) Object::win_h * 0.080F);
+	scale_1 = glm::vec3((GLfloat) Object::win_h * 0.075F);
+
+	// Reubicacion
 	pos_1.x = (GLfloat) win_w - offset.x;
 	pos_1.y = offset.y;
 }

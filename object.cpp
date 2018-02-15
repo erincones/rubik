@@ -30,8 +30,8 @@ glm::vec3 Object::projectToSphere (const int &x, const int &y)
 {
 	// Normalizacion de coordenadas en el intervalo [-1.0, 1.0]
 	glm::vec3 sphere;
-	sphere.x = (GLfloat) (2 * x - win_w) / (GLfloat) win_w;
-	sphere.y = (GLfloat) (win_h - 2 * y) / (GLfloat) win_h;
+	sphere.x = (GLfloat) (2 * x - Object::win_w) / (GLfloat) Object::win_w;
+	sphere.y = (GLfloat) (Object::win_h - 2 * y) / (GLfloat) Object::win_h;
 	sphere.z = (sphere.x * sphere.x) + (sphere.y * sphere.y);
 
 	// Proyeccion sobre esfera
@@ -71,7 +71,7 @@ void Object::orthogonal ()
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 
-	glOrtho(0.0F, (GLfloat) win_w, 0.0, (GLfloat) win_h, -100.0F, 100.0F);
+	glOrtho(0.0F, (GLfloat) Object::win_w, 0.0, (GLfloat) Object::win_h, -100.0F, 100.0F);
 
 	// Cambia a la matriz de modelo y vista
 	glMatrixMode(GL_MODELVIEW);
