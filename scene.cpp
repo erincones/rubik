@@ -60,27 +60,19 @@ void Scene::draw () const
 	glMultMatrixf(glm::value_ptr(glm::mat4_cast(rot_1)));
 
 	// Material
-	glColor3d(color.r, color.g, color.b);
-	glMaterialfv(GL_FRONT, GL_AMBIENT, glm::value_ptr(ambient));
-	glMaterialfv(GL_FRONT, GL_DIFFUSE, glm::value_ptr(diffuse));
-	glMaterialfv(GL_FRONT, GL_SPECULAR, glm::value_ptr(specular));
-	glMaterialfv(GL_FRONT, GL_SHININESS, &shininess);
-
-
-	// Deshabilita el Z-Buffer
-	glDisable(GL_DEPTH_TEST);
+	loadMaterial();
 
 	// Dibujar escena con textura
 	texture_sd->enable();
 	vao_sd->draw();
 	texture_sd->disable();
 
-	// Habilita el Z-Buffer
-	glEnable(GL_DEPTH_TEST);
-
-
 	// Regresa a la matriz anterior
 	glPopMatrix();
+
+
+	// Limpia el Z-Buffer
+	glClear(GL_DEPTH_BUFFER_BIT);
 }
 
 // Animar escena

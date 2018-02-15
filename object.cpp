@@ -67,10 +67,11 @@ void Object::perspective ()
 void Object::orthogonal ()
 {
 	// Apila la matriz de proyeccion y cambia a ortogonal
+	glClear(GL_DEPTH_BUFFER_BIT);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 
-	glOrtho(0.0F, (GLfloat) win_w, 0.0, (GLfloat) win_h, -500.0F, 0.0F);
+	glOrtho(0.0F, (GLfloat) win_w, 0.0, (GLfloat) win_h, -100.0F, 100.0F);
 
 	// Cambia a la matriz de modelo y vista
 	glMatrixMode(GL_MODELVIEW);
@@ -178,6 +179,17 @@ void Object::setPath(const std::string &dir)
 glm::quat *Object::rotPointer ()
 {
 	return &rot_1;
+}
+
+
+// Carga el material
+void Object::loadMaterial() const
+{
+	glColor3d(color.r, color.g, color.b);
+	glMaterialfv(GL_FRONT, GL_AMBIENT, glm::value_ptr(ambient));
+	glMaterialfv(GL_FRONT, GL_DIFFUSE, glm::value_ptr(diffuse));
+	glMaterialfv(GL_FRONT, GL_SPECULAR, glm::value_ptr(specular));
+	glMaterialfv(GL_FRONT, GL_SHININESS, &shininess);
 }
 
 

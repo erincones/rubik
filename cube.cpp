@@ -16,7 +16,7 @@ Cube::Cube (const GLubyte &location)
 	drawable = false;
 
 	// Ajusta la animacion
-	speed = 4.0F;
+	speed = 3.0F;
 	step  = Object::PI_2 * speed / Object::fps;
 
 	// Construye las etiquetas
@@ -84,17 +84,14 @@ void Cube::draw() const
 	// Dibujar caras
 	for (GLubyte i = 0; i < 6; i++)
 	{
-		sticker[i]->draw();
+		if (sticker[i]->side != Sticker::NONE)
+		{
+			sticker[i]->draw();
+		}
 	}
 
-	// Material
-	glColor3d(color.r, color.g, color.b);
-	glMaterialfv(GL_FRONT, GL_AMBIENT, glm::value_ptr(ambient));
-	glMaterialfv(GL_FRONT, GL_DIFFUSE, glm::value_ptr(diffuse));
-	glMaterialfv(GL_FRONT, GL_SPECULAR, glm::value_ptr(specular));
-	glMaterialfv(GL_FRONT, GL_SHININESS, &shininess);
-
-	// Dibujar objeto
+	// Carga material y dibujar objeto
+	loadMaterial();
 	Cube::cube_sd->draw();
 
 	// Regresa a la matriz anterior

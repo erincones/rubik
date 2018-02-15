@@ -92,8 +92,6 @@ Sticker::Sticker (const FACE &dir, Texture *const img)
 // Dibujar
 void Sticker::draw () const
 {
-	if (side == Sticker::NONE) return;
-
 	// Copio la matriz actual
 	glPushMatrix();
 
@@ -102,11 +100,7 @@ void Sticker::draw () const
 	glMultMatrixf(glm::value_ptr(glm::mat4_cast(rot_1)));
 
 	// Material
-	glColor3d(color.r, color.g, color.b);
-	glMaterialfv(GL_FRONT, GL_AMBIENT, glm::value_ptr(ambient));
-	glMaterialfv(GL_FRONT, GL_DIFFUSE, glm::value_ptr(diffuse));
-	glMaterialfv(GL_FRONT, GL_SPECULAR, glm::value_ptr(specular));
-	glMaterialfv(GL_FRONT, GL_SHININESS, &shininess);
+	loadMaterial();
 
 	// Dibujar objeto
 	if (texture_sd != NULL) texture_sd->enable();

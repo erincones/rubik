@@ -7,7 +7,6 @@ Minicube::Minicube (Object *parent) : Cube()
 	ortho = true;
 
 	// Posicion, escala y rotacion
-	pos_1.z = 400.0F;
 	offset  = glm::vec2(75.0F, 75.0F);
 	scale_1 = glm::vec3(50.0F);
 	rot_ref = parent->rotPointer();
@@ -52,14 +51,8 @@ void Minicube::draw() const
 		sticker[i]->draw();
 	}
 
-	// Material
-	glColor3d(color.r, color.g, color.b);
-	glMaterialfv(GL_FRONT, GL_AMBIENT, glm::value_ptr(ambient));
-	glMaterialfv(GL_FRONT, GL_DIFFUSE, glm::value_ptr(diffuse));
-	glMaterialfv(GL_FRONT, GL_SPECULAR, glm::value_ptr(specular));
-	glMaterialfv(GL_FRONT, GL_SHININESS, &shininess);
-
-	// Dibujar objeto
+	// Carga material y dibujar objeto
+	loadMaterial();
 	Cube::cube_sd->draw();
 
 	// Regresa a la matriz anterior

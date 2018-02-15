@@ -117,6 +117,9 @@ class Object
 		// Metodo virtual puro dibujar
 		virtual void draw () const = 0;
 
+		// Carga el material
+		void loadMaterial () const;
+
 
 		// Desctructor virtual puro
 		virtual ~Object () = 0;
