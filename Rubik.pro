@@ -10,7 +10,8 @@ SOURCES += main.cpp \
     vao.cpp \
     texture.cpp \
     minicube.cpp \
-    object.cpp
+    object.cpp \
+    light.cpp
 
 INCLUDEPATH += $$PWD/include
 DEPENDPATH += $$PWD/include
@@ -25,7 +26,8 @@ HEADERS += \
 	vao.h \
     texture.h \
     minicube.h \
-    object.h
+    object.h \
+    light.h
 
 DISTFILES += \
     README.md

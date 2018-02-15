@@ -24,19 +24,6 @@ Scene::Scene ()
 	shininess = 0.0F;
 
 
-	// Iluminacion
-	glEnable(GL_LIGHTING);
-	glEnable(GL_LIGHT0);
-	light_ambient[0] = light_ambient[1] = light_ambient[2] = 0.0F; light_ambient[3] = 1.0F;
-	light_diffuse[0] = light_diffuse[1] = light_diffuse[2] = 1.0F; light_diffuse[3] = 1.0F;
-	light_specular[0] = light_specular[1] = light_specular[2] = 1.0F; light_specular[3] = 1.0F;
-	light_position[0] = 0.1F; light_position[1] = 0.15F; light_position[2] = 0.98F; light_position[3] = 0.0F;
-
-	glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
-	glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
-	glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
-	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
-
 	// Texturas
 	glActiveTexture(GL_TEXTURE0);
 	glEnable(GL_TEXTURE_2D);

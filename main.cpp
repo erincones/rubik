@@ -1,6 +1,7 @@
 #include <rubik.h>
 #include <scene.h>
 #include <object.h>
+#include <light.h>
 
 #include <GL/glew.h>
 #include <GL/freeglut.h>
@@ -22,6 +23,7 @@
 
 
 // Objetos
+Light *light = NULL;
 Scene *scene = NULL;
 Rubik *rubik = NULL;
 Minicube *minicube = NULL;
@@ -229,18 +231,23 @@ int main(int argc, char **argv)
 	glutCloseFunc(close);
 
 
+
 	// Obtiene directorio de archivos
 	std::string path = argv[0];
 	path.erase(path.find_last_of("/\\"));
 	path.erase(path.find_last_of("/\\"));
 	path += "/Files";
+
+	// Informa velocidad de animacion y directorio de archivos
+	Object::setFPS(tick);
 	Object::setPath(path);
 
 
-	// Informa velocidad de animacion
-	Object::setFPS(tick);
+	// Activa la iluminacion
+	Light::globalTurnOn();
 
 	// Construir objetos
+	light = new Light();
 	scene = new Scene();
 	rubik = new Rubik();
 	minicube = new Minicube(rubik);
