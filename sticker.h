@@ -3,6 +3,7 @@
 
 #include <vao.h>
 #include <texture.h>
+#include <object.h>
 
 #include <GL/glew.h>
 #include <GL/freeglut.h>
@@ -12,7 +13,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 
-class Sticker
+class Sticker : public Object
 {
 	public:
 		// Cara de la etiqueta
@@ -39,34 +40,22 @@ class Sticker
 			X0, Y0, Z0
 		};
 
-	private:
-		// Constantes matematicas
-		static const GLdouble scale;
-		static const double PI_2;
-		static const double PI;
+	protected:
+		// Geometria estatica para etiquetas
+		static VAO *sticker_sd;
 
-		// Vertex Array Object y textura
-		VAO *vao;
-		Texture *texture;
+		// Desplazamiento respecto del cubo
+		static GLfloat offset;
 
-		// Color, ubicacion y rotacion
-		glm::dvec3 pos;
-		glm::dquat rot;
-
-		// Material
-		glm::vec4 color;
-		GLfloat ambient[4];
-		GLfloat diffuse[4];
-		GLfloat specular[4];
-		GLfloat shininess;
 
 		// Direccion y color
 		Sticker::FACE side;
 		Sticker::COLOR type;
 
+
 	public:
 		// Constructor
-		Sticker (const Sticker::FACE &dir = Sticker::NONE, VAO *const sticker = NULL, Texture *const img = NULL);
+		Sticker (const Sticker::FACE &dir = Sticker::NONE, Texture *const img = NULL);
 
 		// Dibujar
 		void draw () const;
@@ -78,8 +67,7 @@ class Sticker
 		// Rotar cara
 		void turn (const Sticker::AXIS &dir);
 
-		// Asignar color
-		void setColor (const glm::vec4 &tone);
+
 
 		// Clase amiga Cube, Rubik y Minicube
 		friend class Cube;

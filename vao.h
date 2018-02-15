@@ -22,7 +22,7 @@
 
 class VAO
 {
-	private:
+	protected:
 		// Indentificadores
 		GLuint vao;
 		GLuint vbo;

@@ -1,45 +1,23 @@
 #include <rubik.h>
 
-// Inicializa variabes estaticas
-const GLdouble  Rubik::fov_factor = 3.141592653589793238462643383279502884L / 360.0L;
-const GLdouble  Rubik::PI_2       = 1.570796326794896619231321691639751442L;
-
-
-// Proyectar vector en esfera
-glm::dvec3 Rubik::projectToSphere (const GLdouble &x, const GLdouble &y)
-{
-	const GLdouble w = (GLdouble) width;
-	const GLdouble h = (GLdouble) height;
-
-	// Ubicacion en el plano
-	const GLdouble sph_x = (2.0L * x - w) / w;
-	const GLdouble sph_y = (h - 2.0L * y) / h;
-
-	// Magnitud del vector
-	const GLdouble d = glm::length(glm::dvec2(sph_x, sph_y));
-
-	// Altura
-	const GLdouble sph_z = glm::cos(Rubik::PI_2 * (d < 1.0L ? d : 1.0L));
-
-	// Magnitud
-	return glm::normalize(glm::dvec3(sph_x, sph_y, sph_z));
-}
-
-
 // Constructor
-Rubik::Rubik (const std::string &path) : dim(3), sticker_vao(NULL), cube_flat_vao(NULL), cube_smooth_vao(NULL)
+Rubik::Rubik ()
 {
+	// Carga modelos
+	Cube::cube_sd = new VAO(path + "/roundedcube_flat.obj");
+	Cube::cube_hd = new VAO(path + "/roundedcube_smooth.obj");
+	Sticker::sticker_sd = new VAO(path + "/sticker.obj");
+
 	// Posicion y rotacion inicial
-	pos_1 = glm::dvec3( 0.00,  0.00, -12.5);
-	rot   = glm::dquat(-0.96, -0.21,  0.17, 0.04);
+	pos_1 = glm::vec3( 0.00F,  0.00F, -12.5F);
+	rot_1 = glm::quat(-0.96F, -0.21F,  0.17F, 0.04F);
 
-	// Cargar modelos de los cubos y las etiquetas
-	sticker_vao     = new VAO(path + "/sticker.obj");
-	cube_flat_vao   = new VAO(path + "/roundedcube_flat.obj");
-	cube_smooth_vao = new VAO(path + "/roundedcube_smooth.obj");
+	// Minimo y maximo zoom
+	z_min = -17.5F;
+	z_max =  -4.0F;
 
-	// Construye el minicubo
-	minicube = new Minicube(path, &rot, cube_flat_vao, cube_smooth_vao, sticker_vao);
+	// Dimensiones
+	dim = 3;
 
 	// Construye los cubos
 	for (GLubyte i = 0, x = 0, y = 0, z = 0, location = 0; i < 27; i++)
@@ -48,18 +26,8 @@ Rubik::Rubik (const std::string &path) : dim(3), sticker_vao(NULL), cube_flat_va
 		location = (x << 4) | (y << 2) | z;
 		if (++x == dim) {x = 0; if (++y == dim) {y = 0; z++;}}
 
-		cube[i] = new Cube(location, cube_flat_vao, cube_smooth_vao, sticker_vao);
+		cube[i] = new Cube(location);
 	}
-}
-
-// Asigna la informacion de la pantalla
-void Rubik::setScreenInfo (const GLint &screen_width, const GLint &screen_height, const GLdouble &fovy, const GLdouble &zNear, const GLdouble &zFar)
-{
-	fov    = fovy;
-	width  = screen_width;
-	height = screen_height;
-
-	minicube->setScreenInfo(screen_width, screen_height, fovy, zNear, zFar);
 }
 
 // Dibujar modelo
@@ -70,18 +38,14 @@ void Rubik::draw () const
 	glLoadIdentity();
 
 	// Transformaciones
-	glTranslated(pos_1.x, pos_1.y, pos_1.z);
-	glMultMatrixd(glm::value_ptr(glm::mat4_cast(rot)));
+	glTranslatef(pos_1.x, pos_1.y, pos_1.z);
+	glMultMatrixf(glm::value_ptr(glm::mat4_cast(rot_1)));
 
 	// Dibujar cada cubo
 	for (unsigned char i = 0; i < 27; i++) cube[i]->draw();
 
 	// Regresa a la matriz anterior
 	glPopMatrix();
-
-
-	// Dibuja el minicubo
-	minicube->draw();
 }
 
 // Animar rotacion
@@ -105,69 +69,6 @@ void Rubik::animate ()
 	}
 }
 
-// Imprimir estado
-void Rubik::print () const
-{
-	std::cout << "Estado: " << (win() ? "armado" : "desarmado") << std::endl;
-}
-
-// Click inicial al arrastrar
-void Rubik::drag_0 (const int &x, const int &y)
-{
-	pos_0.x = (GLdouble) x;
-	pos_0.y = (GLdouble) y;
-}
-
-// Actualizar posicion al arrastrar
-void Rubik::drag_1 (const int &x, const int &y)
-{
-	// Desplazamiento del mouse y plano
-	const GLdouble scale = (GLdouble) glm::min(width, height) / 2.0L;
-	const GLdouble dx = (GLdouble) (x - pos_0.x) / scale;
-	const GLdouble dy = (GLdouble) (y - pos_0.y) / scale;
-	const GLdouble dz = glm::tan(fov * Rubik::fov_factor) * (pos_1.z == 0.0L ? 0.01L : glm::abs(pos_1.z));
-
-	// Desplazamiento del modelo
-	pos_1.x += dx * dz;
-	pos_1.y -= dy * dz;
-
-	// Actualiza la posicion inicial
-	pos_0.x = (GLdouble) x;
-	pos_0.y = (GLdouble) y;
-}
-
-// Click inicial al rotar
-void Rubik::rotate_0 (const int &x, const int &y)
-{
-	point_0 = projectToSphere((GLdouble) x, (GLdouble) y);
-}
-
-// Actualizar rotacion al arrastrar
-void Rubik::rotate_1 (const int &x, const int &y)
-{
-	// Vector final
-	point_1 = projectToSphere((GLdouble) x, (GLdouble) y);
-
-	// Angulo
-	double angle = glm::length(point_1 - point_0);
-		 if (angle ==   0.0) angle = 1E8;
-	else if (angle >  0.008) angle = 0.008;
-
-	// Acumular rotacion
-	rot = glm::normalize(glm::dquat(glm::dquat(0.01 / angle, glm::cross(point_0, point_1)) * rot));
-
-	// Actualiza el vector inicial
-	point_0 = point_1;
-}
-
-// Zoom
-void Rubik::zoom (const bool &dir)
-{
-	pos_1.z -= pos_1.z * (dir ? -0.05 : 0.05);
-
-	if (pos_1.z > -4.0L) pos_1.z = -4.0L;
-	if (pos_1.z < -17.5L) pos_1.z = -17.5L;
-}
 
 // Jugar
 void Rubik::play (const Rubik::STEP &step)
@@ -243,11 +144,19 @@ bool Rubik::win () const
 	return true;
 }
 
+// Imprimir estado
+void Rubik::print () const
+{
+	std::cout << "Estado: " << (win() ? "armado" : "desarmado") << std::endl;
+}
+
+
 // Destructor
 Rubik::~Rubik()
 {
-	delete cube_flat_vao;
-	delete sticker_vao;
+	if (Cube::cube_sd != NULL) delete Cube::cube_sd;
+	if (Cube::cube_hd != NULL) delete Cube::cube_hd;
+	if (Sticker::sticker_sd != NULL) delete Sticker::sticker_sd;
 
 	for (int i = 0; i < 26; i++) delete cube[i];
 }

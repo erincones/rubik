@@ -18,25 +18,32 @@ class Object
 		// Constantes estaticas matematicas
 		static const GLfloat PI;
 		static const GLfloat PI_2;
-		static const GLfloat SIN45;
-		static const GLfloat SQRT2;
 
 		// Variables estaticas de ventana
 		static GLint win_w;
 		static GLint win_h;
 
 		// Variables estaticas de proyeccion
-		static const GLfloat fov_factor;
-		static GLfloat proy_fovy;
-		static GLfloat proy_zFar;
-		static GLfloat proy_zNear;
-		static GLfloat proy_w;
-		static GLfloat proy_h;
-		static GLfloat proy_aspect;
+		static const GLfloat fovy_factor;
+		static GLfloat proj_fovy;
+		static GLfloat proj_zFar;
+		static GLfloat proj_zNear;
+		static GLfloat proj_aspect;
+		static GLfloat proj_w;
+		static GLfloat proj_h;
 
-		// Tipos
+
+		// Directorio de busqueda de archivos
+		static std::string path;
+
+		// Variables estaticas de animacion
+		static GLint fps;
+		GLfloat speed;
+		GLfloat step;
+
+		// Tipo de modelo
+		bool ortho;
 		bool hd;
-		bool d2;
 
 		// Vertex Array Object
 		VAO *vao_sd;
@@ -51,20 +58,17 @@ class Object
 		GLfloat z_min;
 		glm::vec3 pos_0;
 		glm::vec3 pos_1;
-		glm::vec3 *pos_parent;
 
 		// Rotacion
 		glm::quat rot_0;
 		glm::quat rot_1;
 		glm::vec3 point_0;
 		glm::vec3 point_1;
-		glm::quat *rot_parent;
-		GLfloat trackball_size;
+		glm::quat *rot_ref;
 
 		// Escala
 		glm::vec3 scale_0;
 		glm::vec3 scale_1;
-		glm::vec3 *scale_parent;
 
 		// Material
 		glm::vec4 color;
@@ -73,19 +77,22 @@ class Object
 		glm::vec4 specular;
 		GLfloat shininess;
 
+
 		// Proyecta punto en virtual trackball
-		glm::vec3 projectToSphere (const glm::vec2 &point);
+		glm::vec3 projectToSphere (const int &x, const int &y);
 
 
 	public:
-		Object();
-
-		// Proyeccion ortogonal
-		static void pushOrtho ();
-		static void popOrtho ();
+		// Manejo de proyecciones
+		static void perspective ();
+		static void orthogonal ();
+		static void popProy ();
 
 		// Actualiza las propiedades de la ventana
-		void setWindow (const GLfloat &w, const GLfloat &h, const GLfloat &fovy, const GLfloat &zNear, const GLfloat &zFar);
+		static void setWindow (const GLfloat &w, const GLfloat &h, const GLfloat &fovy, const GLfloat &zNear, const GLfloat &zFar);
+
+		// Asigna la cantidad de cuadros por segundo
+		static void setFPS (const GLint &fraps);
 
 		// Click-and-drag
 		void dragBegin (const int &x, const int &y);
@@ -99,9 +106,16 @@ class Object
 		void zoomIn ();
 		void zoomOut ();
 
+		// Asigna el directorio de archivos
+		static void setPath (const std::string &dir);
 
-		// Metodo virtual dibujar
-		virtual void draw () const;
+
+		// Retorna apuntador a rotacion
+		glm::quat *rotPointer ();
+
+
+		// Metodo virtual puro dibujar
+		virtual void draw () const = 0;
 
 
 		// Desctructor virtual puro

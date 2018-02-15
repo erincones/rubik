@@ -1,11 +1,14 @@
 #include <rubik.h>
 #include <scene.h>
+#include <object.h>
 
 #include <GL/glew.h>
 #include <GL/freeglut.h>
 
 #include <cmath>
 #include <cstdlib>
+
+#include <string>
 
 
 // Macros para scroll
@@ -17,20 +20,20 @@
 #define GLUT_WHEEL_UP   0x0004
 #endif
 
-// Constantes matematicas
-const GLdouble fov_factor = 3.141592653589793238462643383279502884L / 360.0L;
+
+// Objetos
+Scene *scene = NULL;
+Rubik *rubik = NULL;
+Minicube *minicube = NULL;
 
 
 // Informacion de pantalla
 GLint width = 800;
 GLint height = 600;
-GLdouble fov = 45.0L;
-GLdouble far = 100.0L;
-GLdouble near = 1.0L;
+GLfloat fov = 45.0L;
+GLfloat far = 100.0L;
+GLfloat near = 1.0L;
 
-// Objetos
-Rubik *cube = NULL;
-Scene *scene = NULL;
 
 // Controlador de loop
 const GLint tick = 1000 / 60;
@@ -48,17 +51,6 @@ bool move = false;
 bool rotate = false;
 
 
-// Funciones auxiliares
-// Proyeccion perspectiva
-void perspective (const GLdouble &fovy, const GLdouble &aspect, const GLdouble &zNear, const GLdouble &zFar)
-{
-	//height = tan((fovy / 2) * (pi / 180)) * zNear;
-	const GLdouble h = std::tan(fovy * fov_factor) * zNear;
-	const GLdouble w = h * aspect;
-
-	glFrustum(-w, w, -h, h, zNear, zFar);
-}
-
 
 // Callbacks de GLUT
 // Redimensionar ventana
@@ -71,16 +63,9 @@ void reshape (int w, int h)
 	// Ajusta el viewport a las dimensiones de la ventana
 	glViewport(0, 0, (GLsizei) w, (GLsizei) h);
 
-	// Reestablece la patriz de proyeccion
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	perspective(fov, (GLdouble) w / (GLdouble) h, near, far);
-
-	// Regresa a la matriz del modelo
-	glMatrixMode(GL_MODELVIEW);
-
 	// Actualiza la informacion de la pantalla de los objetos
-	cube->setScreenInfo(width, height, fov, near, far);
+	Object::setWindow((GLfloat) w, (GLfloat) h, fov, near, far);
+	minicube->updatePosition();
 }
 
 // Dibujar escena
@@ -91,13 +76,22 @@ void display ()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
-	// Dibujar escenario
+	// Objetos 3D usan proyeccion perspectiva
+	Object::perspective();
+
+	// Escenario y cubo
 	scene->draw();
+	rubik->draw();
 
-	// Dibujar objeto
-	cube->draw();
 
-	// Refrescar
+	// Objectos 2D usan proyeccion ortogonal
+	Object::orthogonal();
+
+	// Minicubo guia
+	minicube->draw();
+
+
+	// Intercamiar buffers
 	glutSwapBuffers();
 }
 
@@ -109,7 +103,7 @@ void idle ()
 	if ((glutGet(GLUT_ELAPSED_TIME) >= game_ms) && (loops < skip))
 	{
 		scene->animate();
-		cube->animate();
+		rubik->animate();
 
 		loops = 0;
 		game_ms += tick;
@@ -132,26 +126,33 @@ void idle ()
 // Click y scroll
 void mouse (int button, int state, int x, int y)
 {
-	// Rueda del mouse
-	if (((button == GLUT_WHEEL_UP) || (button == GLUT_WHEEL_DOWN)) && (state == GLUT_DOWN))
+	// Scroll hacia arriba
+	if ((button == GLUT_WHEEL_UP) && (state == GLUT_DOWN))
 	{
-		cube->zoom(button == GLUT_WHEEL_UP);
+		rubik->zoomOut();
+		return;
+	}
+
+	// Scrool hacia abajo
+	if ((button == GLUT_WHEEL_DOWN) && (state == GLUT_DOWN))
+	{
+		rubik->zoomIn();
 		return;
 	}
 
 	// Click izquierdo
-	if ((button == GLUT_LEFT_BUTTON))
+	if (button == GLUT_LEFT_BUTTON)
 	{
 		rotate = (state == GLUT_DOWN);
-		if (rotate) cube->rotate_0(x, y);
+		if (rotate) rubik->rotateBegin(x, y);
 		return;
 	}
 
-	// Boton derecho
+	// Click derecho
 	if (button == GLUT_RIGHT_BUTTON)
 	{
 		move = (state == GLUT_DOWN);
-		if (move) cube->drag_0(x, y);
+		if (move) rubik->dragBegin(x, y);
 	}
 }
 
@@ -159,10 +160,10 @@ void mouse (int button, int state, int x, int y)
 void motion (int x, int y)
 {
 	// Arrastrar
-	if (move) cube->drag_1(x, y);
+	if (move) rubik->dragEnd(x, y);
 
 	// Rotar
-	if (rotate) cube->rotate_1(x, y);
+	if (rotate) rubik->rotateEnd(x, y);
 }
 
 // Teclado
@@ -178,27 +179,27 @@ void keyboard (unsigned char key, int, int)
 
 		// Jugar
 		// Sentido de las agujas del reloj
-		case 'q': case 'Q': cube->play(Rubik::U0); return;
-		case 'w': case 'W': cube->play(Rubik::D0); return;
-		case 'e': case 'E': cube->play(Rubik::L0); return;
-		case 'r': case 'R': cube->play(Rubik::R0); return;
-		case 't': case 'T': cube->play(Rubik::F0); return;
-		case 'y': case 'Y': cube->play(Rubik::B0); return;
+		case 'q': case 'Q': rubik->play(Rubik::U0); return;
+		case 'w': case 'W': rubik->play(Rubik::D0); return;
+		case 'e': case 'E': rubik->play(Rubik::L0); return;
+		case 'r': case 'R': rubik->play(Rubik::R0); return;
+		case 't': case 'T': rubik->play(Rubik::F0); return;
+		case 'y': case 'Y': rubik->play(Rubik::B0); return;
 
 		// Sentido opuesto a las agujas del reloj
-		case 'a': case 'A': cube->play(Rubik::U1); return;
-		case 's': case 'S': cube->play(Rubik::D1); return;
-		case 'd': case 'D': cube->play(Rubik::L1); return;
-		case 'f': case 'F': cube->play(Rubik::R1); return;
-		case 'g': case 'G': cube->play(Rubik::F1); return;
-		case 'h': case 'H': cube->play(Rubik::B1); return;
+		case 'a': case 'A': rubik->play(Rubik::U1); return;
+		case 's': case 'S': rubik->play(Rubik::D1); return;
+		case 'd': case 'D': rubik->play(Rubik::L1); return;
+		case 'f': case 'F': rubik->play(Rubik::R1); return;
+		case 'g': case 'G': rubik->play(Rubik::F1); return;
+		case 'h': case 'H': rubik->play(Rubik::B1); return;
 	}
 }
 
 // Al finalizar la aplicacion
 void close ()
 {
-	delete cube;
+	delete rubik;
 	delete scene;
 }
 
@@ -232,11 +233,18 @@ int main(int argc, char **argv)
 	path.erase(path.find_last_of("/\\"));
 	path.erase(path.find_last_of("/\\"));
 	path += "/Files";
+	Object::setPath(path);
 
 
-	// Construir cubo y escenario
-	cube = new Rubik(path);
-	scene = new Scene(path);
+	// Informa velocidad de animacion
+	Object::setFPS(tick);
+
+	// Construir objetos
+	scene = new Scene();
+	rubik = new Rubik();
+	minicube = new Minicube(rubik);
+
+
 
 
 	// Loop principal de GLUT

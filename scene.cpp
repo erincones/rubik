@@ -1,27 +1,32 @@
 #include <scene.h>
 
 // Constructor
-Scene::Scene (const std::string &path) : vao(NULL), texture(NULL)
+Scene::Scene ()
 {
 	// Cargar modelo del escenario
-	vao = new VAO(path + "/scene.obj");
-	texture = new Texture(path + "/background.png");
+	vao_sd = vao_hd = new VAO(path + "/scene.obj");
+	texture_sd = texture_hd = new Texture(path + "/background.png");
 
 	// Posicion
-	pos = glm::dvec3(0.0L, 0.0L, -10.5L);
+	pos_1 = glm::vec3(0.0L, 0.0L, -10.5);
+
+	// Ajuste de animacion
+	speed = 1.0F / 1000.0F;
+	step  = Object::PI * speed / Object::fps;
+	rot_0 = glm::angleAxis(step, glm::vec3(0.0F, 1.0F, 0.0F));
 
 
 	// Material
-	color = glm::vec4(0.70L, 0.70L, 0.8L, 0.1L);
-	scene_ambient[0] = scene_ambient[1] = scene_ambient[2] = 1.0F; scene_ambient[3] = 1.0F;
-	scene_diffuse[0] = scene_diffuse[1] = scene_diffuse[2] = 1.0F; scene_diffuse[3] = 1.0F;
-	scene_specular[0] = scene_specular[1] = scene_specular[2] = 0.0F; scene_specular[3] = 1.0F;
-	scene_shininess = 0.0L;
+	color     = glm::vec4(0.7F, 0.7F, 0.8F, 0.1F);
+	ambient   = glm::vec4(1.0F, 1.0F, 1.0F, 1.0F);
+	diffuse   = glm::vec4(1.0F, 1.0F, 1.0F, 1.0F);
+	specular  = glm::vec4(0.0F, 0.0F, 0.0F, 1.0F);
+	shininess = 0.0F;
+
 
 	// Iluminacion
 	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT0);
-	glShadeModel(GL_SMOOTH);
 	light_ambient[0] = light_ambient[1] = light_ambient[2] = 0.0F; light_ambient[3] = 1.0F;
 	light_diffuse[0] = light_diffuse[1] = light_diffuse[2] = 1.0F; light_diffuse[3] = 1.0F;
 	light_specular[0] = light_specular[1] = light_specular[2] = 1.0F; light_specular[3] = 1.0F;
@@ -36,7 +41,8 @@ Scene::Scene (const std::string &path) : vao(NULL), texture(NULL)
 	glActiveTexture(GL_TEXTURE0);
 	glEnable(GL_TEXTURE_2D);
 
-	// Back face culling, Z-Buffer y aliasing
+	// Normalizacion, Back face culling, Z-Buffer y aliasing
+	glEnable(GL_NORMALIZE);
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_MULTISAMPLE);
@@ -50,24 +56,24 @@ void Scene::draw () const
 	glLoadIdentity();
 
 	// Transformaciones
-	glTranslated(pos.x, pos.y, pos.z);
-	glMultMatrixd(glm::value_ptr(glm::mat4_cast(rot)));
+	glTranslatef(pos_1.x, pos_1.y, pos_1.z);
+	glMultMatrixf(glm::value_ptr(glm::mat4_cast(rot_1)));
 
 	// Material
 	glColor3d(color.r, color.g, color.b);
-	glMaterialfv(GL_FRONT, GL_AMBIENT, scene_ambient);
-	glMaterialfv(GL_FRONT, GL_DIFFUSE, scene_diffuse);
-	glMaterialfv(GL_FRONT, GL_SPECULAR, scene_specular);
-	glMaterialfv(GL_FRONT, GL_SHININESS, &scene_shininess);
+	glMaterialfv(GL_FRONT, GL_AMBIENT, glm::value_ptr(ambient));
+	glMaterialfv(GL_FRONT, GL_DIFFUSE, glm::value_ptr(diffuse));
+	glMaterialfv(GL_FRONT, GL_SPECULAR, glm::value_ptr(specular));
+	glMaterialfv(GL_FRONT, GL_SHININESS, &shininess);
 
 
 	// Deshabilita el Z-Buffer
 	glDisable(GL_DEPTH_TEST);
 
 	// Dibujar escena con textura
-	texture->enable();
-	vao->draw();
-	texture->disable();
+	texture_sd->enable();
+	vao_sd->draw();
+	texture_sd->disable();
 
 	// Habilita el Z-Buffer
 	glEnable(GL_DEPTH_TEST);
@@ -80,13 +86,13 @@ void Scene::draw () const
 // Animar escena
 void Scene::animate ()
 {
-	rot = glm::angleAxis(0.0005, glm::dvec3(0.0, 1.0, 0.0)) * rot;
+	rot_1 = rot_0 * rot_1;
 }
 
 // Destructor
 Scene::~Scene()
 {
-	delete vao;
-	delete texture;
+	delete vao_sd;
+	delete texture_sd;
 }
 

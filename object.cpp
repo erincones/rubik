@@ -1,56 +1,79 @@
 #include <object.h>
 
 // Constantes estaticas matematicas
-const GLfloat Object::PI   = 3.14159265358979323846F;
+const GLfloat Object::PI = 3.14159265358979323846F;
 const GLfloat Object::PI_2 = 1.57079632679489661923F;
-const GLfloat Object::SIN45 = 0.70710678118654752440F;
-const GLfloat Object::SQRT2 = 1.41421356237309504880F;
 
 // Variables estaticas de pantalla
 GLint Object::win_w = 0;
 GLint Object::win_h = 0;
 
 // Variables estaticas de proyeccion
-const GLfloat Object::fov_factor = Object::PI / 360.0F;
-GLfloat Object::proy_fovy = 0.0F;
-GLfloat Object::proy_zFar = 0.0F;
-GLfloat Object::proy_zNear = 0.0F;
-GLfloat Object::proy_w = 0.0F;
-GLfloat Object::proy_h = 0.0F;
-GLfloat Object::proy_aspect = 0.0F;
+const GLfloat Object::fovy_factor = Object::PI / 360.0F;
+GLfloat Object::proj_fovy = 0.0F;
+GLfloat Object::proj_zFar = 0.0F;
+GLfloat Object::proj_zNear = 0.0F;
+GLfloat Object::proj_aspect = 0.0F;
+GLfloat Object::proj_w = 0.0F;
+GLfloat Object::proj_h = 0.0F;
+
+// Directorio de archivos
+std::string Object::path;
+
+// Variables estaticas de animacion
+GLint Object::fps = 0;
+
 
 
 // Proyecta punto en virtual trackball
-glm::vec3 Object::projectToSphere (const glm::vec2 &point)
+glm::vec3 Object::projectToSphere (const int &x, const int &y)
 {
-	// Punto proyectado
-	glm::vec3 proy(point, 0.0F);
+	// Normalizacion de coordenadas en el intervalo [-1.0, 1.0]
+	glm::vec3 sphere;
+	sphere.x = (GLfloat) (2 * x - win_w) / (GLfloat) win_w;
+	sphere.y = (GLfloat) (win_h - 2 * y) / (GLfloat) win_h;
+	sphere.z = (sphere.x * sphere.x) + (sphere.y * sphere.y);
 
-	// Longitud del vector
-	const GLfloat length = glm::length(point);
-
-	// Proyeccion
-	if (length < trackball_size * Object::SIN45)
+	// Proyeccion sobre esfera
+	if (sphere.z <= 0.5F)
 	{
-		// En la esfera
-		proy.z = glm::sqrt((trackball_size * trackball_size) - (length * length));
+		sphere.z = glm::sqrt(1.0F - sphere.z);
 	}
+
+	// Proyeccion sobre hiperbola
 	else
 	{
-		// En la elipse
-		const GLfloat t = trackball_size / Object::SQRT2;
-		proy.z = (t * t) / length;
+		sphere.z = 1.0F / (2.0F * glm::sqrt(sphere.z));
 	}
 
-	// Retorna el vector
-	return proy;
+	return sphere;
 }
 
 
-// Constructor
-Object::Object()
+// Cambia a proyeccion perspectiva
+void Object::perspective ()
 {
+	// Apila la matriz de proyeccion y cambia a perspectiva
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
 
+	glFrustum(-Object::proj_w, Object::proj_w, -Object::proj_h, Object::proj_h, Object::proj_zNear, Object::proj_zFar);
+
+	// Cambia a la matriz de modelo y vista
+	glMatrixMode(GL_MODELVIEW);
+}
+
+// Cambia a proyeccion ortogonal
+void Object::orthogonal ()
+{
+	// Apila la matriz de proyeccion y cambia a ortogonal
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+
+	glOrtho(0.0F, (GLfloat) win_w, 0.0, (GLfloat) win_h, -500.0F, 0.0F);
+
+	// Cambia a la matriz de modelo y vista
+	glMatrixMode(GL_MODELVIEW);
 }
 
 
@@ -62,39 +85,21 @@ void Object::setWindow (const GLfloat &w, const GLfloat &h, const GLfloat &fovy,
 	Object::win_h = h;
 
 	// Proyeccion
-	Object::proy_fovy  = fovy;
-	Object::proy_zNear = zNear;
-	Object::proy_zFar  = zFar;
+	Object::proj_fovy = fovy;
+	Object::proj_zFar = zFar;
+	Object::proj_zNear = zNear;
+	Object::proj_aspect = (GLfloat) w / (GLfloat) h;
 
-	Object::proy_aspect = (GLfloat) w / (GLfloat) h;
-	Object::proy_h = std::tan(Object::proy_fovy * Object::fov_factor) * (pos_1.z != 0.0F ? glm::abs(pos_1.z) : 0.01F);
-	Object::proy_w = Object::proy_h * Object::proy_aspect;
+	// Proyeccion perspectiva
+	Object::proj_h = std::tan(Object::proj_fovy * Object::fovy_factor) * proj_zNear;
+	Object::proj_w = Object::proj_h * Object::proj_aspect;
 }
 
 
-// Cambia a proyeccion ortogonal
-void Object::pushOrtho ()
+// Asigna la cantiadd de cuadros por segundo
+void Object::setFPS(const GLint &fraps)
 {
-	// Apila la matriz de proyeccion y cambia a ortogonal
-	glMatrixMode(GL_PROJECTION);
-	glPushMatrix();
-	glLoadIdentity();
-
-	glOrtho(-Object::proy_w, Object::proy_w, -Object::proy_h, Object::proy_h, Object::proy_zNear, Object::proy_zFar);
-
-	// Cambia a la matriz de modelo y vista
-	glMatrixMode(GL_MODELVIEW);
-}
-
-// Deshace proyeccion ortogonal
-void Object::popOrtho ()
-{
-	// Desapila la matriz de proyeccion
-	glMatrixMode(GL_PROJECTION);
-	glPopMatrix();
-
-	// Cambia a la matriz de modelo y vista
-	glMatrixMode(GL_MODELVIEW);
+	fps = fraps;
 }
 
 
@@ -112,7 +117,7 @@ void Object::dragEnd (const int &x, const int &y)
 	const GLfloat scale = (GLfloat) glm::min(Object::win_w, Object::win_h) / 2.0F;
 	const GLfloat dx = (GLfloat) (x - pos_0.x) / scale;
 	const GLfloat dy = (GLfloat) (y - pos_0.y) / scale;
-	const GLfloat dz = glm::tan(proy_fovy * Object::fov_factor) * (pos_1.z != 0.0F ? glm::abs(pos_1.z) : 0.01F);
+	const GLfloat dz = glm::tan(proj_fovy * Object::fovy_factor) * (pos_1.z != 0.0F ? glm::abs(pos_1.z) : 0.01F);
 
 	// Desplazamiento del modelo
 	pos_1.x += dx * dz;
@@ -128,38 +133,21 @@ void Object::dragEnd (const int &x, const int &y)
 void Object::rotateBegin (const int &x, const int &y)
 {
 	// Proyecta el punto en la esfera
-	point_0 = projectToSphere(glm::vec2((GLfloat) x, (GLfloat) y));
+	point_0 = projectToSphere(x, y);
 }
 
 // Termina rotacion
 void Object::rotateEnd (const int &x, const int &y)
 {
 	// Proyecta el punto en la esfera
-	point_1 = projectToSphere(glm::vec2((GLfloat) x, (GLfloat) y));
+	point_1 = projectToSphere(x, y);
 
-	// No hay rotacion
-	if (point_0 == point_1)
-	{
-		rot_1 = glm::quat();
-		return;
-	}
-
-
-	// Direccion de la rotacion
-	const glm::vec3 dir = glm::cross(point_1, point_0);
-
-	// Cuanto ha rotado
-	GLfloat dt = glm::length(point_0 - point_1) / (2.0F * trackball_size);
-
-		 if (dt >  1.0F) dt =  1.0F;
-	else if (dt < -1.0F) dt = -1.0F;
-
-	// Angulo de rotacion<=
-	const GLfloat phi = 2.0F * glm::asin(dt);
-
+	// Direccion y angulo de rotacion
+	const glm::vec3 dir = glm::cross(point_0, point_1);
+	const GLfloat angle = Object::PI_2 * pos_1.z / z_min;
 
 	// Acumula la rotacion
-	rot_1 = glm::normalize(glm::quat(phi, dir) * rot_1);
+	rot_1 = glm::normalize(glm::angleAxis(angle, dir) * rot_1);
 
 	// Actualiza el punto inicial
 	point_0 = point_1;
@@ -169,55 +157,27 @@ void Object::rotateEnd (const int &x, const int &y)
 // Acerca el objeto
 void Object::zoomIn ()
 {
-	if (pos_1.z <= z_max) pos_1.z += 0.05;
+	if (pos_1.z <= z_max) pos_1.z -= pos_1.z * 0.05;
 }
 
 // Aleja el objecto
 void Object::zoomOut ()
 {
-	if (pos_1.z >= z_min) pos_1.z -= 0.05;
+	if (pos_1.z >= z_min) pos_1.z += pos_1.z * 0.05;
 }
 
 
-// Dibujar
-void Object::draw () const
+// Asigna el directorio de archivos
+void Object::setPath(const std::string &dir)
 {
-	// Si es 2D cambia a ortogonal
-	if (d2) Object::pushOrtho();
+	path = dir;
+}
 
 
-	// Transformaciones
-	glPushMatrix();
-	glTranslatef(pos_1.x, pos_1.y, pos_1.z);
-	glMultMatrixf(glm::value_ptr(glm::mat4_cast(rot_1)));
-
-	// Material
-	glColor3d(color.r, color.g, color.b);
-	glMaterialfv(GL_FRONT, GL_AMBIENT, glm::value_ptr(ambient));
-	glMaterialfv(GL_FRONT, GL_DIFFUSE, glm::value_ptr(diffuse));
-	glMaterialfv(GL_FRONT, GL_SPECULAR, glm::value_ptr(specular));
-	glMaterialfv(GL_FRONT, GL_SHININESS, &shininess);
-
-	// Dibujar objeto con textura
-	if (hd)
-	{
-		texture_hd->enable();
-		vao_hd->draw();
-		texture_hd->disable();
-	}
-	else
-	{
-		texture_sd->enable();
-		vao_sd->draw();
-		texture_sd->disable();
-	}
-
-	// Regresa a la matriz de vista y modelo anterior
-	glPopMatrix();
-
-
-	// Regresa a la matriz de proyeccion anterior
-	if (d2) Object::popOrtho();
+// Retorna apuntador a rotacion
+glm::quat *Object::rotPointer ()
+{
+	return &rot_1;
 }
 
 

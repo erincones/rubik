@@ -34,7 +34,7 @@ void VAO::build (const std::vector<glm::vec3> &vertex, const std::vector<glm::ve
 }
 
 // Constructor
-VAO::VAO (const std::string &path)
+VAO::VAO (const std::string &path) : vao(0), vbo(0), vertices(0)
 {
 	// Valida el archivo
 	std::ifstream file(path.c_str());
@@ -56,12 +56,13 @@ VAO::VAO (const std::string &path)
 
 
 	// Lee cada linea
-	GLint vind[3] = {0};
-	GLint nind[3] = {0};
-	GLint tind[3] = {0};
 	glm::vec3 data;
+	glm::ivec3 vind;
+	glm::ivec3 nind;
+	glm::ivec3 tind;
 	std::string line;
 	std::string token;
+
 	while (!file.eof())
 	{
 		std::getline(file, line);
@@ -101,22 +102,22 @@ VAO::VAO (const std::string &path)
 		else if (token == "f")
 		{
 			//f 50//1 1//2 15//3
-			std::sscanf(line.c_str(), "%*s %d/%d/%d %d/%d/%d %d/%d/%d\n", &vind[0], &tind[0], &nind[0], &vind[1], &tind[1], &nind[1], &vind[2], &tind[2], &nind[2]);
+			std::sscanf(line.c_str(), "%*s %d/%d/%d %d/%d/%d %d/%d/%d\n", &vind.x, &tind.x, &nind.x, &vind.y, &tind.y, &nind.y, &vind.z, &tind.z, &nind.z);
 
 			// Vertices
-			vertex.push_back(vertexRAW[vind[0] - 1]);
-			vertex.push_back(vertexRAW[vind[1] - 1]);
-			vertex.push_back(vertexRAW[vind[2] - 1]);
-
-			// Normales
-			normal.push_back(normalRAW[nind[0] - 1]);
-			normal.push_back(normalRAW[nind[1] - 1]);
-			normal.push_back(normalRAW[nind[2] - 1]);
+			vertex.push_back(vertexRAW[vind.x - 1]);
+			vertex.push_back(vertexRAW[vind.y - 1]);
+			vertex.push_back(vertexRAW[vind.z - 1]);
 
 			// Textura
-			uv.push_back(uvRAW[tind[0] - 1]);
-			uv.push_back(uvRAW[tind[1] - 1]);
-			uv.push_back(uvRAW[tind[2] - 1]);
+			uv.push_back(uvRAW[tind.x - 1]);
+			uv.push_back(uvRAW[tind.y - 1]);
+			uv.push_back(uvRAW[tind.z - 1]);
+
+			// Normales
+			normal.push_back(normalRAW[nind.x - 1]);
+			normal.push_back(normalRAW[nind.y - 1]);
+			normal.push_back(normalRAW[nind.z - 1]);
 		}
 	}
 
@@ -127,6 +128,7 @@ VAO::VAO (const std::string &path)
 
 	build(vertex, normal, uv);
 }
+
 
 // Dibujar
 void VAO::draw () const

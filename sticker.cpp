@@ -1,86 +1,92 @@
 #include <sticker.h>
 
 // Inicializa constantes estaticas
-const GLdouble Sticker::scale = 0.5L;
-const double Sticker::PI_2 = 1.57079632679489661923;
-const double Sticker::PI   = 3.14159265358979323846;
+VAO *Sticker::sticker_sd;
+
+GLfloat Sticker::offset = 0.5L;
+
 
 // Constructor
-Sticker::Sticker (const FACE &dir, VAO *const sticker, Texture *const img) : vao(sticker), texture(img), side(dir)
+Sticker::Sticker (const FACE &dir, Texture *const img)
 {
+	// Asigna direccion y textura
+	side = dir;
+	texture_sd = img;
+
+	// Construye la etiqueta indicada
 	switch (side)
 	{
 		// Arriba
 		case Sticker::UP:
-			pos.y = Sticker::scale;
+			pos_1.y = Sticker::offset;
 
 			// Blanco
 			type = Sticker::WHITE;
-			color = glm::dvec4(0.8L, 0.8L, 0.8L, 1.0L);
+			color = glm::vec4(0.8F, 0.8F, 0.8F, 1.0F);
 			break;
 
 		// Abajo
 		case Sticker::DOWN:
-			pos.y = -Sticker::scale;
-			rot = glm::angleAxis(Sticker::PI, glm::dvec3(1.0L, 0.0L, 0.0L));
+			pos_1.y = -Sticker::offset;
+			rot_1 = glm::angleAxis(Object::PI, glm::vec3(1.0F, 0.0F, 0.0F));
 
 			// Amarillo
 			type = Sticker::YELLOW;
-			color = glm::dvec4(0.8L, 0.8L, 0.0L, 1.0L);
+			color = glm::vec4(0.8F, 0.8F, 0.0F, 1.0F);
 			break;
 
 		// Izquierda
 		case Sticker::LEFT:
-			pos.x = -Sticker::scale;
-			rot = glm::angleAxis(Sticker::PI_2, glm::dvec3(0.0L, 0.0L, 1.0L));
+			pos_1.x = -Sticker::offset;
+			rot_1 = glm::angleAxis(Object::PI_2, glm::vec3(0.0F, 0.0F, 1.0F));
 
 			// Naranja
 			type = Sticker::ORANGE;
-			color = glm::dvec4(0.8L, 0.376L, 0.0L, 1.0L);
+			color = glm::vec4(0.8F, 0.376F, 0.0F, 1.0F);
 			break;
 
 		// Derecha
 		case Sticker::RIGHT:
-			pos.x = Sticker::scale;
-			rot = glm::angleAxis(-Sticker::PI_2, glm::dvec3(0.0L, 0.0L, 1.0L));
+			pos_1.x = Sticker::offset;
+			rot_1 = glm::angleAxis(-Object::PI_2, glm::vec3(0.0F, 0.0F, 1.0F));
 
 			// Rojo
 			type = Sticker::RED;
-			color = glm::dvec4(0.8L, 0.0L, 0.0L, 1.0L);
+			color = glm::vec4(0.8F, 0.0F, 0.0F, 1.0F);
 			break;
 
 		// Fente
 		case Sticker::FRONT:
-			pos.z = Sticker::scale;
-			rot = glm::angleAxis(Sticker::PI_2, glm::dvec3(1.0L, 0.0L, 0.0L));
+			pos_1.z = Sticker::offset;
+			rot_1 = glm::angleAxis(Object::PI_2, glm::vec3(1.0F, 0.0F, 0.0F));
 
 			// Verde
 			type = Sticker::GREEN;
-			color = glm::dvec4(0.0L, 0.8L, 0.0L, 1.0L);
+			color = glm::vec4(0.0F, 0.8F, 0.0F, 1.0F);
 			break;
 
 		// Atras
 		case Sticker::BACK:
-			pos.z = -Sticker::scale;
-			rot = glm::angleAxis(-Sticker::PI_2, glm::dvec3(1.0L, 0.0L, 0.0L));
+			pos_1.z = -Sticker::offset;
+			rot_1 = glm::angleAxis(-Object::PI_2, glm::vec3(1.0F, 0.0F, 0.0F));
 
 			// Azul
 			type = Sticker::BLUE;
-			color = glm::dvec4(0.0L, 0.0L, 0.8L, 1.0L);
+			color = glm::vec4(0.0F, 0.0F, 0.8F, 1.0F);
 			break;
 
 		// Ninguno
 		case Sticker::NONE:
 			type = Sticker::BLACK;
-			color = glm::dvec4(0.0L, 0.0L, 0.0L, 1.0L);
+			color = glm::vec4(0.0F, 0.0F, 0.0F, 1.0F);
 			break;
 	}
 
 	// Material
-	ambient[0] = ambient[1] = ambient[2] = 0.5F; ambient[3] = 1.0F;
-	diffuse[0] = color.r; diffuse[1] = color.g; diffuse[2] = color.b; diffuse[3] = 1.0F;
-	specular[0] = specular[1] = specular[2] = 0.2F; specular[3] = 1.0F;
-	shininess = 64.0L;
+	ambient   = glm::vec4(0.5F, 0.5F, 0.5F, 1.0F);
+	diffuse   = color;
+	specular  = glm::vec4(0.2F, 0.2F, 0.2F, 1.0F);
+	shininess = 64.0F;
 }
 
 // Dibujar
@@ -92,20 +98,20 @@ void Sticker::draw () const
 	glPushMatrix();
 
 	// Transformaciones
-	glTranslated(pos.x, pos.y, pos.z);
-	glMultMatrixd(glm::value_ptr(glm::mat4_cast(rot)));
+	glTranslatef(pos_1.x, pos_1.y, pos_1.z);
+	glMultMatrixf(glm::value_ptr(glm::mat4_cast(rot_1)));
 
 	// Material
 	glColor3d(color.r, color.g, color.b);
-	glMaterialfv(GL_FRONT, GL_AMBIENT, ambient);
-	glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse);
-	glMaterialfv(GL_FRONT, GL_SPECULAR, specular);
+	glMaterialfv(GL_FRONT, GL_AMBIENT, glm::value_ptr(ambient));
+	glMaterialfv(GL_FRONT, GL_DIFFUSE, glm::value_ptr(diffuse));
+	glMaterialfv(GL_FRONT, GL_SPECULAR, glm::value_ptr(specular));
 	glMaterialfv(GL_FRONT, GL_SHININESS, &shininess);
 
 	// Dibujar objeto
-	if (texture != NULL) texture->enable();
-	vao->draw();
-	if (texture != NULL) texture->disable();
+	if (texture_sd != NULL) texture_sd->enable();
+	sticker_sd->draw();
+	if (texture_sd != NULL) texture_sd->disable();
 
 	// Regresa a la matriz anterior
 	glPopMatrix();
@@ -157,12 +163,5 @@ void Sticker::turn(const Sticker::AXIS &dir)
 		(dir == Sticker::Y0 && side == Sticker::LEFT ) ||
 		(dir == Sticker::X1 && side == Sticker::DOWN ) ||
 		(dir == Sticker::Y1 && side == Sticker::RIGHT)) {side = Sticker::BACK;  return;}
-}
-
-// Asigna el color
-void Sticker::setColor(const glm::vec4 &tone)
-{
-	color = tone;
-	diffuse[0] = color.r; diffuse[1] = color.g; diffuse[2] = color.b; diffuse[3] = 1.0F;
 }
 

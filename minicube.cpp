@@ -1,108 +1,69 @@
 #include <minicube.h>
 
-// Inicializa variabes estaticas
-const GLdouble  Minicube::fov_factor = 3.141592653589793238462643383279502884L / 360.0L;
-const GLdouble  Minicube::PI_2       = 1.570796326794896619231321691639751442L;
-
-// Activa la proyeccion ortogonal
-void Minicube::enable_ortho () const
-{
-	// Cambia a la matriz de proyeccion, guarda el estado y crea una nueva matriz
-	glMatrixMode(GL_PROJECTION);
-	glPushMatrix();
-	glLoadIdentity();
-
-	// Calculo de la proyeccion ortogonal
-	glOrtho(-width, width, -height, height, near, far);
-
-	// Regresa a la matriz de modelo y vista
-	glMatrixMode(GL_MODELVIEW);
-}
-
-// Desactiva la proyeccion ortogonal
-void Minicube::disable_ortho () const
-{
-	// Cambia a la matriz de proyeccion y recupera el estado anterior
-	glMatrixMode(GL_PROJECTION);
-	glPopMatrix();
-
-	// Regresa a la matriz de modelo y vista
-	glMatrixMode(GL_MODELVIEW);
-}
-
 // Constructor
-Minicube::Minicube (const std::string &path, glm::dquat *const parent_rot, VAO *const cube_sd, VAO *const cube_hd, VAO *const sticker) : vao_sd(cube_sd), vao_hd(cube_hd), rot(parent_rot)
+Minicube::Minicube (Object *parent) : Cube()
 {
-	// Escala y posicion
-	offset = 1.0L;
-	pos    = glm::dvec3(0.0, 0.0, -12.5);
+	// Se usa proyeccion ortogonal
+	ortho = true;
+
+	// Posicion, escala y rotacion
+	pos_1.z = 400.0F;
+	offset  = glm::vec2(75.0F, 75.0F);
+	scale_1 = glm::vec3(50.0F);
+	rot_ref = parent->rotPointer();
 
 	// Crea cada calcomania con las texturas
 	for (GLubyte i = 0; i < 6; i++)
 	{
 		const Sticker::FACE dir = (Sticker::FACE) i;
 
-		texture[i] = new Texture(path + "/minicube_" + std::string(1, i + '0') + ".png");
-		face[i] = new Sticker(dir, sticker, texture[i]);
-		face[i]->setColor(glm::vec4(1.0F));
+		sticker_texture[dir] = new Texture(path + "/minicube_" + std::string(1, i + '0') + ".png");
+
+		sticker[dir]->side = dir;
+		sticker[dir]->diffuse = glm::vec4(1.0F);
+		sticker[dir]->texture_sd = sticker_texture[i];
 	}
 
-	// Material
-	color = glm::vec4(0.0F, 0.0F, 0.0F, 0.1F);
-	ambient[0] = ambient[1] = ambient[2] = 0.0F; ambient[3] = 1.0F;
-	diffuse[0] = diffuse[1] = diffuse[2] = 0.1F; diffuse[3] = 1.0F;
-	specular[0] = specular[1] = specular[2] = 0.75F; specular[3] = 1.0F;
-	shininess = 64.0L;
+	// Debe dibujarse
+	drawable = true;
 }
 
 // Asigna la informacion de la pantalla
-void Minicube::setScreenInfo (const GLint &screen_width, const GLint &screen_height, const GLdouble &fovy, const GLdouble &zNear, const GLdouble &zFar)
+void Minicube::updatePosition ()
 {
-	fov    = fovy;
-	far    = zFar;
-	near   = zNear;
-
-	// Calculo de la proyeccion ortogonal
-	aspect = (GLdouble) screen_width / (GLdouble) screen_height;
-	height = std::tan(fov * fov_factor) * (-pos.z);
-	width  = height * aspect;
-
-	// Actualiza la posicion
-	pos.x = width  - offset;
-	pos.y = offset - height;
+	pos_1.x = (GLfloat) win_w - offset.x;
+	pos_1.y = offset.y;
 }
 
-// Dibujar
 void Minicube::draw() const
 {
-	// Habilita la proyeccion ortogonal
-	enable_ortho();
-
+	// Respaldo la matriz actual
+	glPushMatrix();
+	glLoadIdentity();
 
 	// Transformaciones
-	glPushMatrix();
-	glTranslated(pos.x, pos.y, pos.z);
-	glMultMatrixd(glm::value_ptr(glm::mat4_cast(*rot)));
+	glTranslatef(pos_1.x, pos_1.y, pos_1.z);
+	glMultMatrixf(glm::value_ptr(glm::mat4_cast(*rot_ref)));
+	glScalef(scale_1.x, scale_1.y, scale_1.z);
 
-	// Dibuja cada calcomania
-	for (GLubyte i = 0; i < 6; i++) face[i]->draw();
+	// Dibujar caras
+	for (GLubyte i = 0; i < 6; i++)
+	{
+		sticker[i]->draw();
+	}
 
 	// Material
 	glColor3d(color.r, color.g, color.b);
-	glMaterialfv(GL_FRONT, GL_AMBIENT, ambient);
-	glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse);
-	glMaterialfv(GL_FRONT, GL_SPECULAR, specular);
+	glMaterialfv(GL_FRONT, GL_AMBIENT, glm::value_ptr(ambient));
+	glMaterialfv(GL_FRONT, GL_DIFFUSE, glm::value_ptr(diffuse));
+	glMaterialfv(GL_FRONT, GL_SPECULAR, glm::value_ptr(specular));
 	glMaterialfv(GL_FRONT, GL_SHININESS, &shininess);
 
 	// Dibujar objeto
-	vao_sd->draw();
+	Cube::cube_sd->draw();
 
 	// Regresa a la matriz anterior
 	glPopMatrix();
-
-
-	// Desactiva la proyeccion ortogonal
-	disable_ortho();
 }
 
 // Destructor
@@ -110,8 +71,8 @@ Minicube::~Minicube()
 {
 	for (GLubyte i = 0; i < 6; i++)
 	{
-		delete face[i];
-		delete texture[i];
+		delete sticker[i];
+		delete sticker_texture[i];
 	}
 }
 

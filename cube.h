@@ -4,6 +4,7 @@
 #include <sticker.h>
 #include <vao.h>
 #include <texture.h>
+#include <object.h>
 
 #include <GL/glew.h>
 #include <GL/freeglut.h>
@@ -13,38 +14,26 @@
 #include <glm/gtc/type_ptr.hpp>
 
 
-class Cube
+class Cube : public Object
 {
-	private:
+	protected:
+		// Geometria estatica para los cubos
+		static VAO *cube_sd;
+		static VAO *cube_hd;
+
 		// Dimension y separacion entre cubos
-		static const GLdouble scale;
-		static const GLdouble gap;
+		static GLfloat size;
+		static GLfloat gap;
 
-		// Rotacion
-		static const double PI_2;
-		static const double step;
-		double angle;
+		// Angulo acumulado en animacion
+		GLfloat angle;
 
-		// Vertex Array Object
-		VAO *const vao_sd;
-		VAO *const vao_hd;
+		// Etiquetas de color por cara
+		Sticker *sticker[6];
 
-		// Ubicacion y rotacion
-		glm::dvec3 pos;
-		glm::dquat rot_0;
-		glm::dquat rot_1;
+		// Opciones de dibujado
+		bool drawable;
 
-		// Material
-		glm::vec4 color;
-		GLfloat ambient[4];
-		GLfloat diffuse[4];
-		GLfloat specular[4];
-		GLfloat shininess;
-
-		// Etiquetas de color
-		Sticker *face_x;
-		Sticker *face_y;
-		Sticker *face_z;
 
 	public:
 		// Eje de rotacion
@@ -60,7 +49,11 @@ class Cube
 		};
 
 		// Constructor
-		Cube (const GLubyte &location = 0x15, VAO *const cube_sd = NULL, VAO *const cube_hd = NULL, VAO *const sticker = NULL);
+		Cube (const GLubyte &location = 0x15);
+
+		// Asigna VAO estaticos
+		static void setVaoSD (VAO *vao);
+		static void setVaoHD (VAO *vao);
 
 		// Dibujar
 		void draw () const;

@@ -4,6 +4,7 @@
 #include <minicube.h>
 #include <sticker.h>
 #include <cube.h>
+#include <object.h>
 #include <vao.h>
 
 #include <GL/glew.h>
@@ -20,7 +21,7 @@
 #include <iostream>
 
 
-class Rubik
+class Rubik : public Object
 {
 	public:
 		// Pasos
@@ -39,54 +40,19 @@ class Rubik
 			U1, D1, L1, R1, F1, B1
 		};
 
-	private:
-		// Constantes matematicas
-		static const GLdouble fov_factor;
-		static const GLdouble PI_2;
-
-		// Informacion de pantalla
-		GLint width;
-		GLint height;
-		GLdouble fov;
-
-		// Posicion
-		glm::dvec3 pos_0;
-		glm::dvec3 pos_1;
-
-		// Rotacion
-		glm::dquat rot;
-		glm::dvec3 point_0;
-		glm::dvec3 point_1;
-
-
+	protected:
 		// Datos
-		unsigned int dim;
+		GLsizei dim;
 		Cube *cube[27];
-
-		// Minicubo
-		Minicube *minicube;
-
-		// Vertex Array Objects
-		VAO *sticker_vao;
-		VAO *cube_flat_vao;
-		VAO *cube_smooth_vao;
 
 		// Cola de rotaciones
 		std::queue<Cube::AXIS> move;
 		std::queue<std::vector<Cube *> > target;
 
 
-		// Proyectar punto en esfera
-		glm::dvec3 projectToSphere (const GLdouble &x, const GLdouble &y);
-
-
-
 	public:
 		// Constructor
-		Rubik (const std::string &path);
-
-		// Asigna la informacion de la pantalla
-		void setScreenInfo (const GLint &screen_width, const GLint &screen_height, const GLdouble &fovy, const GLdouble &zNear, const GLdouble &zFar);
+		Rubik ();
 
 		// Dibujar
 		void draw () const;
@@ -94,23 +60,12 @@ class Rubik
 		// Animar cubo
 		void animate ();
 
-		// Imprimir estado
-		void print () const;
-
-		// Traslacion
-		void drag_0 (const int &x, const int &y);
-		void drag_1 (const int &x, const int &y);
-
-		// Rotacion
-		void rotate_0 (const int &x, const int &y);
-		void rotate_1 (const int &x, const int &y);
-
-		// Zoom
-		void zoom (const bool &dir);
-
 		// Jugar
 		void play (const Rubik::STEP &step);
 		bool win () const;
+
+		// Imprimir estado
+		void print () const;
 
 		// Destructor
 		~Rubik ();

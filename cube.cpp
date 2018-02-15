@@ -1,104 +1,101 @@
 #include <cube.h>
 
 // Inicializacion de variables estaticas
-const GLdouble Cube::scale = 1.0L;
-const GLdouble Cube::gap   = 0.0025L;
-const double   Cube::PI_2  = 1.57079632679489661923;
-const double   Cube::step  = Cube::PI_2 / (60.0 / 5.0);
+VAO *Cube::cube_sd;
+VAO *Cube::cube_hd;
 
-Cube::Cube (const GLubyte &location, VAO *const cube_sd, VAO *const cube_hd, VAO *const sticker) : angle(0.0), vao_sd(cube_sd), vao_hd(cube_hd), face_x(NULL), face_y(NULL), face_z(NULL)
+GLfloat Cube::size = 1.0L;
+GLfloat Cube::gap   = 0.0025L;
+
+
+// Constructor
+Cube::Cube (const GLubyte &location)
 {
-	// Ubicacion en el eje x
-	GLubyte axis = location >> 4;
-	switch (axis)
+	// Inicializa angulo y visibilidad
+	angle = 0.0F;
+	drawable = false;
+
+	// Ajusta la animacion
+	speed = 4.0F;
+	step  = Object::PI_2 * speed / Object::fps;
+
+	// Construye las etiquetas
+	for (GLubyte i = 0; i < 6; i++)
 	{
-		case 0: // Izquierda
-			pos.x = -Cube::scale - Cube::gap;
-			face_x = new Sticker(Sticker::LEFT, sticker);
-			break;
+		const Sticker::FACE dir = (Sticker::FACE) i;
 
-		case 2: // Derecha
-			pos.x = Cube::scale + Cube::gap;
-			face_x = new Sticker(Sticker::RIGHT, sticker);
-			break;
-
-		default: // Ninguno
-			face_x = new Sticker(Sticker::NONE, sticker);
-			break;
+		sticker[dir] = new Sticker(dir);
+		sticker[dir]->side = Sticker::NONE;
 	}
 
-	// Ubicacion en el eje y
-	axis = (location >> 2) & 3;
-	switch (axis)
+
+	// Ubicacion
+	const GLfloat offset = Cube::size + Cube::gap;
+
+	// Etiquetas
+	glm::ivec3 axis;
+	axis.x =  location >> 0x04;
+	axis.y = (location >> 0x02) & 0x03;
+	axis.z =  location &  0x03;
+
+	switch (axis.x)
 	{
-		case 0: // Arriba
-			pos.y = Cube::scale + Cube::gap;
-			face_y = new Sticker(Sticker::UP, sticker);
-			break;
-
-		case 2: // Abajo
-			pos.y = -Cube::scale - Cube::gap;
-			face_y = new Sticker(Sticker::DOWN, sticker);
-			break;
-
-		default: // Ninguno
-			face_y = new Sticker(Sticker::NONE, sticker);
-			break;
+		case 0: pos_1.x = -offset; sticker[Sticker::LEFT ]->side = Sticker::LEFT;  break; // Izquierda
+		case 2: pos_1.x =  offset; sticker[Sticker::RIGHT]->side = Sticker::RIGHT; break; // Derecha
 	}
 
-	// Ubicacion en el eje z
-	axis = location & 3;
-	switch (axis)
+	switch (axis.y)
 	{
-		case 0: // Frente
-			pos.z = Cube::scale + Cube::gap;
-			face_z = new Sticker(Sticker::FRONT, sticker);
-			break;
-
-		case 2: // Atras
-			pos.z = -Cube::scale - Cube::gap;
-			face_z = new Sticker(Sticker::BACK, sticker);
-			break;
-
-		default: // Ninguno
-			face_z = new Sticker(Sticker::NONE, sticker);
-			break;
+		case 0: pos_1.y =  offset; sticker[Sticker::UP  ]->side = Sticker::UP;   break; // Arriba
+		case 2: pos_1.y = -offset; sticker[Sticker::DOWN]->side = Sticker::DOWN; break; // Abajo
 	}
+
+	switch (axis.z)
+	{
+		case 0: pos_1.z =  offset; sticker[Sticker::FRONT]->side = Sticker::FRONT; break; // Frente
+		case 2: pos_1.z = -offset; sticker[Sticker::BACK ]->side = Sticker::BACK;  break; // Atras
+	}
+
+	// Valida si es dibujable
+	drawable |= (axis.x != 1) || (axis.y != 1) || (axis.z != 1);
+
 
 	// Material
-	color = glm::vec4(0.0F, 0.0F, 0.0F, 0.1F);
-	ambient[0] = ambient[1] = ambient[2] = 0.0F; ambient[3] = 1.0F;
-	diffuse[0] = diffuse[1] = diffuse[2] = 0.1F; diffuse[3] = 1.0F;
-	specular[0] = specular[1] = specular[2] = 0.75F; specular[3] = 1.0F;
-	shininess = 64.0L;
+	color     = glm::vec4(0.00F, 0.00F, 0.00F, 0.1F);
+	ambient   = glm::vec4(0.00F, 0.00F, 0.00F, 1.0F);
+	diffuse   = glm::vec4(0.10F, 0.10F, 0.10F, 1.0F);
+	specular  = glm::vec4(0.75F, 0.75F, 0.75F, 1.0F);
+	shininess = 64.0F;
 }
+
 
 void Cube::draw() const
 {
-	// Cubo central no se dibuja
-	if ((face_x->side == Sticker::NONE) && (face_y->side == Sticker::NONE) && (face_z->side == Sticker::NONE)) return;
+	// Valida si se debe dibujar el cubo
+	if (!drawable) return;
 
 	// Respaldo la matriz actual
 	glPushMatrix();
 
 	// Transformaciones
-	glMultMatrixd(glm::value_ptr(glm::mat4_cast(rot_1)));
-	glTranslated(pos.x, pos.y, pos.z);
+	glMultMatrixf(glm::value_ptr(glm::mat4_cast(rot_1)));
+	glTranslatef(pos_1.x, pos_1.y, pos_1.z);
 
 	// Dibujar caras
-	face_x->draw();
-	face_y->draw();
-	face_z->draw();
+	for (GLubyte i = 0; i < 6; i++)
+	{
+		sticker[i]->draw();
+	}
 
 	// Material
 	glColor3d(color.r, color.g, color.b);
-	glMaterialfv(GL_FRONT, GL_AMBIENT, ambient);
-	glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse);
-	glMaterialfv(GL_FRONT, GL_SPECULAR, specular);
+	glMaterialfv(GL_FRONT, GL_AMBIENT, glm::value_ptr(ambient));
+	glMaterialfv(GL_FRONT, GL_DIFFUSE, glm::value_ptr(diffuse));
+	glMaterialfv(GL_FRONT, GL_SPECULAR, glm::value_ptr(specular));
 	glMaterialfv(GL_FRONT, GL_SHININESS, &shininess);
 
 	// Dibujar objeto
-	vao_sd->draw();
+	Cube::cube_sd->draw();
 
 	// Regresa a la matriz anterior
 	glPopMatrix();
@@ -107,15 +104,30 @@ void Cube::draw() const
 // Valida la direccion de caras visibles
 bool Cube::face (const Sticker::FACE &side) const
 {
-	return (face_x->face() == side) || (face_y->face() == side) || (face_z->face() == side);
+	for (GLubyte i = 0; i < 6; i++)
+	{
+		if (sticker[i]->side == side)
+		{
+			return true;
+		}
+	}
+
+	// Si ninguna cara coincide retorna falso
+	return false;
 }
 
 // Retorna el color de una cara
 Sticker::COLOR Cube::tone (const Sticker::FACE &side) const
 {
-	if (face_x->side == side) return face_x->type;
-	if (face_y->side == side) return face_y->type;
-	if (face_z->side == side) return face_z->type;
+	for (GLubyte i = 0; i < 6; i++)
+	{
+		if (sticker[i]->side == side)
+		{
+			return sticker[i]->type;
+		}
+	}
+
+	// Si no existe la cara no retorna ningun color
 	return Sticker::BLACK;
 }
 
@@ -126,14 +138,14 @@ void Cube::turn (const Cube::AXIS &dir)
 	switch (dir)
 	{
 		// Sentido de las agujas del reloj
-		case Cube::X0: rot_1 = glm::angleAxis(Cube::PI_2, glm::dvec3(1.0, 0.0, 0.0)) * rot_0; break;
-		case Cube::Y0: rot_1 = glm::angleAxis(Cube::PI_2, glm::dvec3(0.0, 1.0, 0.0)) * rot_0; break;
-		case Cube::Z0: rot_1 = glm::angleAxis(Cube::PI_2, glm::dvec3(0.0, 0.0, 1.0)) * rot_0; break;
+		case Cube::X0: rot_1 = glm::angleAxis(Cube::PI_2, glm::vec3(1.0, 0.0, 0.0)) * rot_0; break;
+		case Cube::Y0: rot_1 = glm::angleAxis(Cube::PI_2, glm::vec3(0.0, 1.0, 0.0)) * rot_0; break;
+		case Cube::Z0: rot_1 = glm::angleAxis(Cube::PI_2, glm::vec3(0.0, 0.0, 1.0)) * rot_0; break;
 
 		// Sentido contrario a las agujas del reloj
-		case Cube::X1: rot_1 = glm::angleAxis(-Cube::PI_2, glm::dvec3(1.0, 0.0, 0.0)) * rot_0; break;
-		case Cube::Y1: rot_1 = glm::angleAxis(-Cube::PI_2, glm::dvec3(0.0, 1.0, 0.0)) * rot_0; break;
-		case Cube::Z1: rot_1 = glm::angleAxis(-Cube::PI_2, glm::dvec3(0.0, 0.0, 1.0)) * rot_0; break;
+		case Cube::X1: rot_1 = glm::angleAxis(-Cube::PI_2, glm::vec3(1.0, 0.0, 0.0)) * rot_0; break;
+		case Cube::Y1: rot_1 = glm::angleAxis(-Cube::PI_2, glm::vec3(0.0, 1.0, 0.0)) * rot_0; break;
+		case Cube::Z1: rot_1 = glm::angleAxis(-Cube::PI_2, glm::vec3(0.0, 0.0, 1.0)) * rot_0; break;
 	}
 
 	// Respalda la rotacion y reinicia el angulo
@@ -144,16 +156,17 @@ void Cube::turn (const Cube::AXIS &dir)
 // Actualizar rotacion de las caras
 void Cube::turnFaces (const Sticker::AXIS &dir)
 {
-	face_x->turn(dir);
-	face_y->turn(dir);
-	face_z->turn(dir);
+	for (GLubyte i = 0; i < 6; i++)
+	{
+		sticker[i]->turn(dir);
+	}
 }
 
 // Animar cubo
 bool Cube::animate (const Cube::AXIS &dir)
 {
 	// Ajusta la rotacion cuando se alcanza o superan pi / 2 radianes
-	angle += Cube::step;
+	angle += step;
 	if (angle >= Cube::PI_2)
 	{
 		turn(dir);
@@ -164,14 +177,14 @@ bool Cube::animate (const Cube::AXIS &dir)
 	switch (dir)
 	{
 		// Sentido de las agujas del reloj
-		case Cube::X0: rot_1 = glm::angleAxis(angle, glm::dvec3(1.0, 0.0, 0.0)) * rot_0; return false;
-		case Cube::Y0: rot_1 = glm::angleAxis(angle, glm::dvec3(0.0, 1.0, 0.0)) * rot_0; return false;
-		case Cube::Z0: rot_1 = glm::angleAxis(angle, glm::dvec3(0.0, 0.0, 1.0)) * rot_0; return false;
+		case Cube::X0: rot_1 = glm::angleAxis(angle, glm::vec3(1.0, 0.0, 0.0)) * rot_0; return false;
+		case Cube::Y0: rot_1 = glm::angleAxis(angle, glm::vec3(0.0, 1.0, 0.0)) * rot_0; return false;
+		case Cube::Z0: rot_1 = glm::angleAxis(angle, glm::vec3(0.0, 0.0, 1.0)) * rot_0; return false;
 
 		// Sentido contrario a las agujas del reloj
-		case Cube::X1: rot_1 = glm::angleAxis(-angle, glm::dvec3(1.0, 0.0, 0.0)) * rot_0; return false;
-		case Cube::Y1: rot_1 = glm::angleAxis(-angle, glm::dvec3(0.0, 1.0, 0.0)) * rot_0; return false;
-		case Cube::Z1: rot_1 = glm::angleAxis(-angle, glm::dvec3(0.0, 0.0, 1.0)) * rot_0; return false;
+		case Cube::X1: rot_1 = glm::angleAxis(-angle, glm::vec3(1.0, 0.0, 0.0)) * rot_0; return false;
+		case Cube::Y1: rot_1 = glm::angleAxis(-angle, glm::vec3(0.0, 1.0, 0.0)) * rot_0; return false;
+		case Cube::Z1: rot_1 = glm::angleAxis(-angle, glm::vec3(0.0, 0.0, 1.0)) * rot_0; return false;
 	}
 
 	return false;
@@ -180,8 +193,9 @@ bool Cube::animate (const Cube::AXIS &dir)
 // Destructor
 Cube::~Cube()
 {
-	delete face_x;
-	delete face_y;
-	delete face_z;
+	for (GLubyte i = 0; i < 6; i++)
+	{
+		delete sticker[i];
+	}
 }
 

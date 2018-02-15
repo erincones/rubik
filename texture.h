@@ -12,14 +12,13 @@
 
 class Texture
 {
-	private:
+	protected:
 		// Identificador y detalles de textura
 		GLuint texture;
-		GLsizei width;
-		GLsizei height;
 
 		// Construye la textura
-		void build (GLubyte *const image);
+		void build (GLubyte *const image, const GLsizei &width, const GLsizei &height);
+
 
 	public:
 		// Constructor

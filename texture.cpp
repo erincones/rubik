@@ -1,7 +1,7 @@
 #include <texture.h>
 
 // Construye la textura
-void Texture::build (GLubyte *const image)
+void Texture::build (GLubyte *const image, const GLsizei &width, const GLsizei &height)
 {
 	// Textura
 	glGenTextures(1, &texture);
@@ -23,11 +23,13 @@ void Texture::build (GLubyte *const image)
 }
 
 // Constructor
-Texture::Texture (const std::string &path) : texture(0), width(0), height(0)
+Texture::Texture (const std::string &path) : texture(0)
 {
 	if (!path.empty())
 	{
 		// Lee la textura
+		GLsizei width = 0;
+		GLsizei height = 0;
 		GLubyte *const image = SOIL_load_image(path.c_str(), &width, &height, 0, SOIL_LOAD_RGBA);
 
 		// Validacion de la lectura del archivo
@@ -35,11 +37,12 @@ Texture::Texture (const std::string &path) : texture(0), width(0), height(0)
 		else
 		{
 			// Se construye la textura y libera memoria de la imagen leida
-			build(image);
+			build(image, width, height);
 			SOIL_free_image_data(image);
 		}
 	}
 }
+
 
 // Habilita la textura
 void Texture::enable () const
@@ -53,6 +56,7 @@ void Texture::disable () const
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
+
 // Destructor
 Texture::~Texture()
 {
@@ -61,8 +65,6 @@ Texture::~Texture()
 
 	// Resetea valores por defecto
 	texture = 0;
-	width  = 0;
-	height = 0;
 }
 
 

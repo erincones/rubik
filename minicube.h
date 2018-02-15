@@ -1,9 +1,10 @@
 #ifndef MINICUBE_H
 #define MINICUBE_H
 
+#include <cube.h>
 #include <sticker.h>
-#include <vao.h>
 #include <texture.h>
+#include <object.h>
 
 #include <GL/glew.h>
 #include <GL/freeglut.h>
@@ -13,61 +14,27 @@
 #include <glm/gtc/type_ptr.hpp>
 
 
-class Minicube
+class Minicube : public Cube
 {
-	private:
-		// Constantes matematicas
-		static const GLdouble fov_factor;
-		static const GLdouble PI_2;
+	protected:
+		// Textura de cada etiqueta
+		Texture *sticker_texture[6];
 
-		// Vertex Array Object
-		VAO *vao_sd;
-		VAO *vao_hd;
-
-		// Caracas y texturas
-		Sticker *face[6];
-		Texture *texture[6];
-
-		// Escala, posicion y rotacion
-		GLint offset;
-		glm::dvec3 pos;
-		glm::dquat *const rot;
-
-		// Material
-		glm::vec4 color;
-		GLfloat ambient[4];
-		GLfloat diffuse[4];
-		GLfloat specular[4];
-		GLfloat shininess;
-
-		// Informacion de pantalla
-		GLint width;
-		GLint height;
-		GLdouble fov;
-		GLdouble far;
-		GLdouble near;
-		GLdouble aspect;
-
-		// Cambia la proyeccion
-		void enable_ortho  () const;
-		void disable_ortho () const;
-
+		// Distancia de los bordes
+		glm::vec2 offset;
 
 	public:
 		// Constructor
-		Minicube (const std::string &path, glm::dquat *const parent_rot, VAO *const cube_sd = NULL, VAO *const cube_hd = NULL, VAO *const sticker = NULL);
+		Minicube (Object *parent);
 
-		// Asigna informacion de la pantalla
-		void setScreenInfo (const GLint &screen_width, const GLint &screen_height, const GLdouble &fovy, const GLdouble &zNear, const GLdouble &zFar);
+		// Actualizar posicion
+		void updatePosition ();
 
 		// Dibujar
 		void draw () const;
 
 		// Destructor
 		~Minicube ();
-
-		// Clase amiga Rubik
-		friend class Rubik;
 };
 
 #endif // MINICUBE_H

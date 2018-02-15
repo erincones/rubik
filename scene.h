@@ -3,6 +3,7 @@
 
 #include <vao.h>
 #include <texture.h>
+#include <object.h>
 
 #include <GL/glew.h>
 #include <GL/freeglut.h>
@@ -14,24 +15,9 @@
 #include <string>
 
 
-class Scene
+class Scene : public Object
 {
-	private:
-		// Modelo del escenario
-		VAO *vao;
-		Texture *texture;
-
-		// Posicion y rotacion
-		glm::dvec3 pos;
-		glm::dquat rot;
-
-		// Material
-		glm::vec4 color;
-		GLfloat scene_ambient[4];
-		GLfloat scene_diffuse[4];
-		GLfloat scene_specular[4];
-		GLfloat scene_shininess;
-
+	protected:
 		// Luces
 		GLfloat light_ambient[4];
 		GLfloat light_diffuse[4];
@@ -40,10 +26,7 @@ class Scene
 
 	public:
 		// Constructor
-		Scene (const std::string &path);
-
-		// Asignar textura
-		bool setTexture (const std::string &path);
+		Scene ();
 
 		// Dibujar
 		void draw () const;
