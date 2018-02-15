@@ -64,7 +64,6 @@ Minicube::~Minicube()
 {
 	for (GLubyte i = 0; i < 6; i++)
 	{
-		delete sticker[i];
 		delete sticker_texture[i];
 	}
 }

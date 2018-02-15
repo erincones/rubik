@@ -199,8 +199,9 @@ void keyboard (unsigned char key, int, int)
 // Al finalizar la aplicacion
 void close ()
 {
-	delete rubik;
 	delete scene;
+	delete rubik;
+	delete minicube;
 }
 
 int main(int argc, char **argv)

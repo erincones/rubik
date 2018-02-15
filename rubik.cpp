@@ -154,9 +154,9 @@ void Rubik::print () const
 // Destructor
 Rubik::~Rubik()
 {
-	if (Cube::cube_sd != NULL) delete Cube::cube_sd;
-	if (Cube::cube_hd != NULL) delete Cube::cube_hd;
-	if (Sticker::sticker_sd != NULL) delete Sticker::sticker_sd;
+	delete Cube::cube_sd;
+	delete Cube::cube_hd;
+	delete Sticker::sticker_sd;
 
 	for (int i = 0; i < 26; i++) delete cube[i];
 }
