@@ -8,3 +8,6 @@ Makefile
 
 # Archivos de Blender
 *.blend1
+
+# Historiales
+*history
