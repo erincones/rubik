@@ -30,9 +30,9 @@ Minicube *minicube = NULL;
 // Informacion de pantalla
 GLint width = 800;
 GLint height = 600;
-GLfloat fov = 45.0L;
-GLfloat far = 100.0L;
-GLfloat near = 1.0L;
+GLfloat fovy = 45.0F;
+GLfloat zFar = 100.0F;
+GLfloat zNear = 1.0F;
 
 
 // Controlador de loop
@@ -64,7 +64,7 @@ void reshape (int w, int h)
 	glViewport(0, 0, (GLsizei) w, (GLsizei) h);
 
 	// Actualiza la informacion de la pantalla de los objetos
-	Object::setWindow((GLfloat) w, (GLfloat) h, fov, near, far);
+	Object::setWindow((GLfloat) w, (GLfloat) h, fovy, zNear, zFar);
 	minicube->updatePosition();
 }
 

@@ -4,8 +4,8 @@
 VAO *Cube::cube_sd;
 VAO *Cube::cube_hd;
 
-GLfloat Cube::size = 1.0L;
-GLfloat Cube::gap   = 0.0025L;
+GLfloat Cube::size = 1.0F;
+GLfloat Cube::gap   = 0.0025F;
 
 
 // Constructor

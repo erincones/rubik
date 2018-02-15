@@ -86,7 +86,6 @@ class Object
 		// Manejo de proyecciones
 		static void perspective ();
 		static void orthogonal ();
-		static void popProy ();
 
 		// Actualiza las propiedades de la ventana
 		static void setWindow (const GLfloat &w, const GLfloat &h, const GLfloat &fovy, const GLfloat &zNear, const GLfloat &zFar);

@@ -51,10 +51,6 @@ class Cube : public Object
 		// Constructor
 		Cube (const GLubyte &location = 0x15);
 
-		// Asigna VAO estaticos
-		static void setVaoSD (VAO *vao);
-		static void setVaoHD (VAO *vao);
-
 		// Dibujar
 		void draw () const;
 

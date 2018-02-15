@@ -82,14 +82,14 @@ void Object::orthogonal ()
 void Object::setWindow (const GLfloat &w, const GLfloat &h, const GLfloat &fovy, const GLfloat &zNear, const GLfloat &zFar)
 {
 	// Dimensiones
-	Object::win_w = w;
-	Object::win_h = h;
+	Object::win_w = (GLint) w;
+	Object::win_h = (GLint) h;
 
 	// Proyeccion
 	Object::proj_fovy = fovy;
 	Object::proj_zFar = zFar;
 	Object::proj_zNear = zNear;
-	Object::proj_aspect = (GLfloat) w / (GLfloat) h;
+	Object::proj_aspect = w / h;
 
 	// Proyeccion perspectiva
 	Object::proj_h = std::tan(Object::proj_fovy * Object::fovy_factor) * proj_zNear;
@@ -158,13 +158,13 @@ void Object::rotateEnd (const int &x, const int &y)
 // Acerca el objeto
 void Object::zoomIn ()
 {
-	if (pos_1.z <= z_max) pos_1.z -= pos_1.z * 0.05;
+	if (pos_1.z <= z_max) pos_1.z -= pos_1.z * 0.05F;
 }
 
 // Aleja el objecto
 void Object::zoomOut ()
 {
-	if (pos_1.z >= z_min) pos_1.z += pos_1.z * 0.05;
+	if (pos_1.z >= z_min) pos_1.z += pos_1.z * 0.05F;
 }
 
 
