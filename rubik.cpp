@@ -13,8 +13,8 @@ Rubik::Rubik ()
 	rot_1 = glm::quat(-0.96F, -0.21F,  0.17F, 0.04F);
 
 	// Minimo y maximo zoom
-	z_min = -17.5F;
-	z_max =  -4.0F;
+	z_min = -19.00F;
+	z_max =  -4.25F;
 
 	// Dimensiones
 	dim = 3;

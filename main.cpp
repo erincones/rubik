@@ -33,7 +33,7 @@ Minicube *minicube = NULL;
 GLint width = 800;
 GLint height = 600;
 GLfloat fovy = 45.0F;
-GLfloat zFar = 100.0F;
+GLfloat zFar = 50.0F;
 GLfloat zNear = 1.0F;
 
 

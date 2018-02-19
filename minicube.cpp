@@ -19,6 +19,7 @@ Minicube::Minicube (Object *parent) : Cube()
 		sticker_texture[dir] = new Texture(path + "/minicube_" + std::string(1, i + '0') + ".png");
 
 		sticker[dir]->side = dir;
+		sticker[dir]->color = glm::vec4(1.0F);
 		sticker[dir]->diffuse = glm::vec4(1.0F);
 		sticker[dir]->texture_sd = sticker_texture[i];
 	}
