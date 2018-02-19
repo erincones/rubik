@@ -30,6 +30,7 @@ class Cube : public Object
 
 		// Etiquetas de color por cara
 		Sticker *sticker[6];
+		Sticker *visible[3];
 
 		// Opciones de dibujado
 		bool drawable;

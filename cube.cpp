@@ -19,6 +19,11 @@ Cube::Cube (const GLubyte &location)
 	speed = 3.0F;
 	step  = Object::PI_2 * speed / Object::fps;
 
+	// Inicializa en NULL las etiquetas visibles
+	visible[0] = NULL;
+	visible[1] = NULL;
+	visible[2] = NULL;
+
 	// Construye las etiquetas
 	for (GLubyte i = 0; i < 6; i++)
 	{
@@ -56,8 +61,17 @@ Cube::Cube (const GLubyte &location)
 		case 2: pos_1.z = -offset; sticker[Sticker::BACK ]->side = Sticker::BACK;  break; // Atras
 	}
 
-	// Valida si es dibujable
-	drawable |= (axis.x != 1) || (axis.y != 1) || (axis.z != 1);
+	// Guarda caras visibles y valida si es dibujable
+
+	for (GLubyte i = 0, j = 0; i < 6; i++)
+	{
+		if (sticker[i]->side != Sticker::NONE)
+		{
+			visible[j] = sticker[i];
+			drawable = true;
+			j++;
+		}
+	}
 
 
 	// Material
@@ -82,13 +96,9 @@ void Cube::draw() const
 	glTranslatef(pos_1.x, pos_1.y, pos_1.z);
 
 	// Dibujar caras
-	for (GLubyte i = 0; i < 6; i++)
-	{
-		if (sticker[i]->side != Sticker::NONE)
-		{
-			sticker[i]->draw();
-		}
-	}
+	if (visible[0] != NULL) visible[0]->draw();
+	if (visible[1] != NULL) visible[1]->draw();
+	if (visible[2] != NULL) visible[2]->draw();
 
 	// Carga material y dibujar objeto
 	loadMaterial();
@@ -101,13 +111,10 @@ void Cube::draw() const
 // Valida la direccion de caras visibles
 bool Cube::face (const Sticker::FACE &side) const
 {
-	for (GLubyte i = 0; i < 6; i++)
-	{
-		if (sticker[i]->side == side)
-		{
-			return true;
-		}
-	}
+
+	if ((visible[0] != NULL) && (visible[0]->side == side)) return true;
+	if ((visible[1] != NULL) && (visible[1]->side == side)) return true;
+	if ((visible[2] != NULL) && (visible[2]->side == side)) return true;
 
 	// Si ninguna cara coincide retorna falso
 	return false;
@@ -116,13 +123,9 @@ bool Cube::face (const Sticker::FACE &side) const
 // Retorna el color de una cara
 Sticker::COLOR Cube::tone (const Sticker::FACE &side) const
 {
-	for (GLubyte i = 0; i < 6; i++)
-	{
-		if (sticker[i]->side == side)
-		{
-			return sticker[i]->type;
-		}
-	}
+	if ((visible[0] != NULL) && (visible[0]->side == side)) return visible[0]->type;
+	if ((visible[1] != NULL) && (visible[1]->side == side)) return visible[1]->type;
+	if ((visible[2] != NULL) && (visible[2]->side == side)) return visible[2]->type;
 
 	// Si no existe la cara no retorna ningun color
 	return Sticker::BLACK;
@@ -153,10 +156,10 @@ void Cube::turn (const Cube::AXIS &dir)
 // Actualizar rotacion de las caras
 void Cube::turnFaces (const Sticker::AXIS &dir)
 {
-	for (GLubyte i = 0; i < 6; i++)
-	{
-		sticker[i]->turn(dir);
-	}
+
+	if (visible[0] != NULL) visible[0]->turn(dir);
+	if (visible[1] != NULL) visible[1]->turn(dir);
+	if (visible[2] != NULL) visible[2]->turn(dir);
 }
 
 // Animar cubo
