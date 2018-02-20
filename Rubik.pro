@@ -2,6 +2,9 @@ TEMPLATE = app
 CONFIG -= app_bundle
 CONFIG -= qt
 
+QMAKE_CXXFLAGS_RELEASE -= -O2
+QMAKE_CXXFLAGS_RELEASE += -Ofast
+
 SOURCES += main.cpp \
     rubik.cpp \
     scene.cpp \
@@ -12,12 +15,7 @@ SOURCES += main.cpp \
     minicube.cpp \
     object.cpp \
     light.cpp \
-    object2d.cpp
-
-INCLUDEPATH += $$PWD/include
-DEPENDPATH += $$PWD/include
-
-LIBS += -L$$PWD/lib/ -lSOIL -lGL -lGLU -lGLEW -lglut
+	object2d.cpp
 
 HEADERS += \
     rubik.h \
@@ -34,3 +32,8 @@ HEADERS += \
 DISTFILES += \
     README.md
 
+
+INCLUDEPATH += $$PWD/include
+DEPENDPATH += $$PWD/include
+
+LIBS += -L$$PWD/lib/ -lSOIL -lGL -lGLU -lGLEW -lglut
