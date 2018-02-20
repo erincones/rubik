@@ -3,7 +3,7 @@
 // Inicializa constantes estaticas
 VAO *Sticker::sticker_sd;
 
-GLfloat Sticker::offset = 0.5L;
+GLfloat Sticker::offset_0 = 0.5L;
 
 
 // Constructor
@@ -18,7 +18,7 @@ Sticker::Sticker (const FACE &dir, Texture *const img)
 	{
 		// Arriba
 		case Sticker::UP:
-			pos_1.y = Sticker::offset;
+			pos_1.y = Sticker::offset_0;
 
 			// Blanco
 			type = Sticker::WHITE;
@@ -27,7 +27,7 @@ Sticker::Sticker (const FACE &dir, Texture *const img)
 
 		// Abajo
 		case Sticker::DOWN:
-			pos_1.y = -Sticker::offset;
+			pos_1.y = -Sticker::offset_0;
 			rot_1 = glm::angleAxis(Object::PI, glm::vec3(1.0F, 0.0F, 0.0F));
 
 			// Amarillo
@@ -37,7 +37,7 @@ Sticker::Sticker (const FACE &dir, Texture *const img)
 
 		// Izquierda
 		case Sticker::LEFT:
-			pos_1.x = -Sticker::offset;
+			pos_1.x = -Sticker::offset_0;
 			rot_1 = glm::angleAxis(Object::PI_2, glm::vec3(0.0F, 0.0F, 1.0F));
 
 			// Naranja
@@ -47,7 +47,7 @@ Sticker::Sticker (const FACE &dir, Texture *const img)
 
 		// Derecha
 		case Sticker::RIGHT:
-			pos_1.x = Sticker::offset;
+			pos_1.x = Sticker::offset_0;
 			rot_1 = glm::angleAxis(-Object::PI_2, glm::vec3(0.0F, 0.0F, 1.0F));
 
 			// Rojo
@@ -57,7 +57,7 @@ Sticker::Sticker (const FACE &dir, Texture *const img)
 
 		// Fente
 		case Sticker::FRONT:
-			pos_1.z = Sticker::offset;
+			pos_1.z = Sticker::offset_0;
 			rot_1 = glm::angleAxis(Object::PI_2, glm::vec3(1.0F, 0.0F, 0.0F));
 
 			// Verde
@@ -67,7 +67,7 @@ Sticker::Sticker (const FACE &dir, Texture *const img)
 
 		// Atras
 		case Sticker::BACK:
-			pos_1.z = -Sticker::offset;
+			pos_1.z = -Sticker::offset_0;
 			rot_1 = glm::angleAxis(-Object::PI_2, glm::vec3(1.0F, 0.0F, 0.0F));
 
 			// Azul

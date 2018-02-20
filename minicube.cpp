@@ -6,10 +6,9 @@ Minicube::Minicube (Object *parent) : Cube()
 	// Se usa proyeccion ortogonal
 	ortho = true;
 
-	// Posicion, escala y rotacion
-	offset  = glm::vec2((GLfloat) Object::win_h * 0.080F);
-	scale_1 = glm::vec3((GLfloat) Object::win_h * 0.075F);
+	// Referencia a la rotacion y ubicacion
 	rot_ref = parent->rotPointer();
+	updatePosition();
 
 	// Crea cada calcomania con las texturas
 	for (GLubyte i = 0; i < 6; i++)
@@ -28,17 +27,6 @@ Minicube::Minicube (Object *parent) : Cube()
 	drawable = true;
 }
 
-// Asigna la informacion de la pantalla
-void Minicube::updatePosition ()
-{
-	// Actualiza valores
-	offset  = glm::vec2((GLfloat) Object::win_h * 0.080F);
-	scale_1 = glm::vec3((GLfloat) Object::win_h * 0.075F);
-
-	// Reubicacion
-	pos_1.x = (GLfloat) win_w - offset.x;
-	pos_1.y = offset.y;
-}
 
 void Minicube::draw() const
 {
@@ -47,9 +35,9 @@ void Minicube::draw() const
 	glLoadIdentity();
 
 	// Transformaciones
-	glTranslatef(pos_1.x, pos_1.y, pos_1.z);
+	glTranslatef(pos_1.x, pos_1.y, 0.0F);
 	glMultMatrixf(glm::value_ptr(glm::mat4_cast(*rot_ref)));
-	glScalef(scale_1.x, scale_1.y, scale_1.z);
+	glScalef(scale_1.x, scale_1.y, scale_1.y);
 
 	// Dibujar caras
 	for (GLubyte i = 0; i < 6; i++)

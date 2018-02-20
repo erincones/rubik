@@ -11,7 +11,8 @@ SOURCES += main.cpp \
     texture.cpp \
     minicube.cpp \
     object.cpp \
-    light.cpp
+    light.cpp \
+    object2d.cpp
 
 INCLUDEPATH += $$PWD/include
 DEPENDPATH += $$PWD/include
@@ -27,7 +28,8 @@ HEADERS += \
     texture.h \
     minicube.h \
     object.h \
-    light.h
+    light.h \
+    object2d.h
 
 DISTFILES += \
     README.md

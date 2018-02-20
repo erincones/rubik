@@ -71,7 +71,7 @@ void Object::orthogonal ()
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 
-	glOrtho(0.0F, (GLfloat) Object::win_w, 0.0, (GLfloat) Object::win_h, -100.0F, 100.0F);
+	glOrtho(0.0F, (GLfloat) Object::win_w, 0.0F, (GLfloat) Object::win_h, -50.0F, 50.0F);
 
 	// Cambia a la matriz de modelo y vista
 	glMatrixMode(GL_MODELVIEW);
@@ -101,6 +101,12 @@ void Object::setWindow (const GLfloat &w, const GLfloat &h, const GLfloat &fovy,
 void Object::setFPS(const GLint &fraps)
 {
 	fps = fraps;
+}
+
+// Asigna el directorio de archivos
+void Object::setPath(const std::string &dir)
+{
+	path = dir;
 }
 
 
@@ -165,13 +171,6 @@ void Object::zoomIn ()
 void Object::zoomOut ()
 {
 	if (pos_1.z >= z_min) pos_1.z += pos_1.z * 0.05F;
-}
-
-
-// Asigna el directorio de archivos
-void Object::setPath(const std::string &dir)
-{
-	path = dir;
 }
 
 

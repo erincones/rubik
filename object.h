@@ -66,10 +66,6 @@ class Object
 		glm::vec3 point_1;
 		glm::quat *rot_ref;
 
-		// Escala
-		glm::vec3 scale_0;
-		glm::vec3 scale_1;
-
 		// Material
 		glm::vec4 color;
 		glm::vec4 ambient;
@@ -93,6 +89,9 @@ class Object
 		// Asigna la cantidad de cuadros por segundo
 		static void setFPS (const GLint &fraps);
 
+		// Asigna el directorio de archivos
+		static void setPath (const std::string &dir);
+
 		// Click-and-drag
 		void dragBegin (const int &x, const int &y);
 		void dragEnd (const int &x, const int &y);
@@ -105,16 +104,13 @@ class Object
 		void zoomIn ();
 		void zoomOut ();
 
-		// Asigna el directorio de archivos
-		static void setPath (const std::string &dir);
-
 
 		// Retorna apuntador a rotacion
 		glm::quat *rotPointer ();
 
 
 		// Metodo virtual puro dibujar
-		virtual void draw () const = 0;
+		//virtual void draw () const = 0;
 
 		// Carga el material
 		void loadMaterial () const;

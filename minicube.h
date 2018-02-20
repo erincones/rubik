@@ -5,6 +5,7 @@
 #include <sticker.h>
 #include <texture.h>
 #include <object.h>
+#include <object2d.h>
 
 #include <GL/glew.h>
 #include <GL/freeglut.h>
@@ -14,21 +15,15 @@
 #include <glm/gtc/type_ptr.hpp>
 
 
-class Minicube : public Cube
+class Minicube : public Cube, public Object2D
 {
 	protected:
 		// Textura de cada etiqueta
 		Texture *sticker_texture[6];
 
-		// Distancia de los bordes
-		glm::vec2 offset;
-
 	public:
 		// Constructor
 		Minicube (Object *parent);
-
-		// Actualizar posicion
-		void updatePosition ();
 
 		// Dibujar
 		void draw () const;

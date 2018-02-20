@@ -14,7 +14,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 
-class Cube : public Object
+class Cube : virtual public Object
 {
 	protected:
 		// Geometria estatica para los cubos

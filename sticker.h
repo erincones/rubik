@@ -45,7 +45,7 @@ class Sticker : public Object
 		static VAO *sticker_sd;
 
 		// Desplazamiento respecto del cubo
-		static GLfloat offset;
+		static GLfloat offset_0;
 
 
 		// Direccion y color
