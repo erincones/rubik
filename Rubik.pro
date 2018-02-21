@@ -15,7 +15,7 @@ SOURCES += main.cpp \
     minicube.cpp \
     object.cpp \
     light.cpp \
-	object2d.cpp
+    gui.cpp
 
 HEADERS += \
     rubik.h \
@@ -27,7 +27,7 @@ HEADERS += \
     minicube.h \
     object.h \
     light.h \
-    object2d.h
+    gui.h
 
 DISTFILES += \
     README.md

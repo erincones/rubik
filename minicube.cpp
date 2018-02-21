@@ -1,14 +1,17 @@
 #include <minicube.h>
 
 // Constructor
-Minicube::Minicube (Object *parent) : Cube()
+Minicube::Minicube (Object *parent, const Object::POSITION2D &pos) : Cube()
 {
 	// Se usa proyeccion ortogonal
 	ortho = true;
 
-	// Referencia a la rotacion y ubicacion
+	// Rotacion y ubicacion
+	pos_2d = pos;
+	scale_0 = glm::vec2(0.075F);
+	offset_0 = glm::vec2(0.050F);
 	rot_ref = parent->rotPointer();
-	updatePosition();
+	updateOrthoPosition();
 
 	// Crea cada calcomania con las texturas
 	for (GLubyte i = 0; i < 6; i++)

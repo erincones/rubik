@@ -14,6 +14,9 @@
 
 class Object
 {
+	public:
+		enum POSITION2D {UPLEFT, UPRIGHT, DOWNLEFT, DOWNRIGHT};
+
 	protected:
 		// Constantes estaticas matematicas
 		static const GLfloat PI;
@@ -45,6 +48,9 @@ class Object
 		bool ortho;
 		bool hd;
 
+		// Posicion 2D
+		Object::POSITION2D origin;
+
 		// Vertex Array Object
 		VAO *vao_sd;
 		VAO *vao_hd;
@@ -58,6 +64,14 @@ class Object
 		GLfloat z_min;
 		glm::vec3 pos_0;
 		glm::vec3 pos_1;
+
+		// Desplazamiento
+		glm::vec2 offset_0;
+		glm::vec2 offset_1;
+
+		// Escala
+		glm::vec2 scale_0;
+		glm::vec2 scale_1;
 
 		// Rotacion
 		glm::quat rot_0;
@@ -103,6 +117,9 @@ class Object
 		// Zoom
 		void zoomIn ();
 		void zoomOut ();
+
+		// Actualiza la posicion ortogonal
+		void updateOrthoPosition ();
 
 
 		// Retorna apuntador a rotacion

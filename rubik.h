@@ -1,7 +1,6 @@
 #ifndef RUBIK_H
 #define RUBIK_H
 
-#include <minicube.h>
 #include <sticker.h>
 #include <cube.h>
 #include <object.h>

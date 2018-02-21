@@ -1,7 +1,8 @@
 #include <rubik.h>
+#include <minicube.h>
 #include <scene.h>
+#include <gui.h>
 #include <object.h>
-#include <object2d.h>
 #include <light.h>
 
 #include <GL/glew.h>
@@ -68,7 +69,7 @@ void reshape (int w, int h)
 
 	// Actualiza la informacion de la pantalla de los objetos
 	Object::setWindow((GLfloat) w, (GLfloat) h, fovy, zNear, zFar);
-	minicube->updatePosition();
+	minicube->updateOrthoPosition();
 }
 
 // Dibujar escena
@@ -252,11 +253,7 @@ int main(int argc, char **argv)
 	light = new Light();
 	scene = new Scene();
 	rubik = new Rubik();
-	minicube = new Minicube(rubik);
-
-	// Ubicacion y escalado de objetos
-	minicube->setOffset(0.050F, 0.050F, Object2D::DOWNRIGHT);
-	minicube->setScale(0.075F, 0.075F);
+	minicube = new Minicube(rubik, Object::DOWNRIGHT);
 
 
 
