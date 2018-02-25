@@ -26,7 +26,7 @@ class Texture
 
 		// Habilita y desabilita la textura
 		void enable () const;
-		void disable () const;
+		static void disable ();
 
 		// Destructor
 		~Texture ();

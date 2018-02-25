@@ -4,8 +4,8 @@
 Rubik::Rubik ()
 {
 	// Carga modelos
-	Cube::cube_sd = new VAO(path + "/roundedcube_flat.obj");
-	Cube::cube_hd = new VAO(path + "/roundedcube_smooth.obj");
+	Cube::cube_0 = new VAO(path + "/roundedcube_flat.obj");
+	Cube::cube_1 = new VAO(path + "/roundedcube_smooth.obj");
 	Sticker::sticker_sd = new VAO(path + "/sticker.obj");
 
 	// Posicion y rotacion inicial
@@ -42,6 +42,7 @@ void Rubik::draw () const
 	glMultMatrixf(glm::value_ptr(glm::mat4_cast(rot_1)));
 
 	// Dibujar cada cubo
+	Texture::disable();
 	for (unsigned char i = 0; i < 27; i++) cube[i]->draw();
 
 	// Regresa a la matriz anterior
@@ -154,8 +155,8 @@ void Rubik::print () const
 // Destructor
 Rubik::~Rubik()
 {
-	delete Cube::cube_sd;
-	delete Cube::cube_hd;
+	delete Cube::cube_0;
+	delete Cube::cube_1;
 	delete Sticker::sticker_sd;
 
 	for (int i = 0; i < 26; i++) delete cube[i];

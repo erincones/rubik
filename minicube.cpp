@@ -1,17 +1,15 @@
 #include <minicube.h>
 
 // Constructor
-Minicube::Minicube (Object *parent, const Object::POSITION2D &pos) : Cube()
+Minicube::Minicube (Object *parent, const FlatObject::POSITION2D &pos) : Cube(), rot_ref(parent->rot())
 {
-	// Se usa proyeccion ortogonal
-	ortho = true;
+	// Debe dibujarse
+	drawable = true;
 
-	// Rotacion y ubicacion
-	pos_2d = pos;
-	scale_0 = glm::vec2(0.075F);
-	offset_0 = glm::vec2(0.050F);
-	rot_ref = parent->rotPointer();
-	updateOrthoPosition();
+	// Escala y ubicacion
+	origin = pos;
+	scale_0 = glm::vec3(0.075F);
+	offset_0 = glm::vec3(0.050F, 0.050F, 0.0F);
 
 	// Crea cada calcomania con las texturas
 	for (GLubyte i = 0; i < 6; i++)
@@ -23,11 +21,11 @@ Minicube::Minicube (Object *parent, const Object::POSITION2D &pos) : Cube()
 		sticker[dir]->side = dir;
 		sticker[dir]->color = glm::vec4(1.0F);
 		sticker[dir]->diffuse = glm::vec4(1.0F);
-		sticker[dir]->texture_sd = sticker_texture[i];
+		sticker[dir]->texture_0 = sticker_texture[i];
 	}
 
-	// Debe dibujarse
-	drawable = true;
+	// Color
+	color = glm::vec4(0.08F, 0.08F, 0.08F, 1.0F);
 }
 
 
@@ -38,9 +36,10 @@ void Minicube::draw() const
 	glLoadIdentity();
 
 	// Transformaciones
+	glColor4f(color.r, color.g, color.b, color.a);
 	glTranslatef(pos_1.x, pos_1.y, 0.0F);
-	glMultMatrixf(glm::value_ptr(glm::mat4_cast(*rot_ref)));
-	glScalef(scale_1.x, scale_1.y, scale_1.y);
+	glMultMatrixf(glm::value_ptr(glm::mat4_cast(rot_ref)));
+	glScalef(scale_1.x, scale_1.y, scale_1.z);
 
 	// Dibujar caras
 	for (GLubyte i = 0; i < 6; i++)
@@ -50,7 +49,8 @@ void Minicube::draw() const
 
 	// Carga material y dibujar objeto
 	loadMaterial();
-	Cube::cube_sd->draw();
+	Texture::disable();
+	Cube::cube_0->draw();
 
 	// Regresa a la matriz anterior
 	glPopMatrix();

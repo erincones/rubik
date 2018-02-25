@@ -151,7 +151,7 @@ void Object::rotateEnd (const int &x, const int &y)
 
 	// Direccion y angulo de rotacion
 	const glm::vec3 dir = glm::cross(point_0, point_1);
-	const GLfloat angle = Object::PI_2 * pos_1.z / z_min;
+	const GLfloat angle = 1.4F * Object::PI_2 * pos_1.z / z_min;
 
 	// Acumula la rotacion
 	rot_1 = glm::normalize(glm::angleAxis(angle, dir) * rot_1);
@@ -174,26 +174,16 @@ void Object::zoomOut ()
 }
 
 
-// Actualiza la posicion ortogonal
-// Acutlizar posicion
-void Object::updateOrthoPosition ()
+// Retorna referencia a rotacion
+const glm::quat &Object::rot ()
 {
-	// Actualiza valores
-	offset_1 = (GLfloat) Object::win_h * offset_0;
-	scale_1 = (GLfloat) Object::win_h * scale_0;
-
-	// Reubicacion
-	const int pos = (int) pos_2d;
-	const glm::vec2 mid = scale_1 / 2.0F;
-	pos_1.x = ((pos & 1) == 0 ? offset_1.x + mid.x : (GLfloat) Object::win_w - offset_1.x - mid.x);
-	pos_1.y = ((pos & 2) == 2 ? offset_1.y + mid.y : (GLfloat) Object::win_h - offset_1.y - mid.y);
+	return rot_1;
 }
 
-
-// Retorna apuntador a rotacion
-glm::quat *Object::rotPointer ()
+// Retorna referencia a posicion
+const glm::vec3 &Object::pos ()
 {
-	return &rot_1;
+	return pos_1;
 }
 
 

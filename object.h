@@ -14,9 +14,6 @@
 
 class Object
 {
-	public:
-		enum POSITION2D {UPLEFT, UPRIGHT, DOWNLEFT, DOWNRIGHT};
-
 	protected:
 		// Constantes estaticas matematicas
 		static const GLfloat PI;
@@ -44,20 +41,13 @@ class Object
 		GLfloat speed;
 		GLfloat step;
 
-		// Tipo de modelo
-		bool ortho;
-		bool hd;
-
-		// Posicion 2D
-		Object::POSITION2D origin;
-
 		// Vertex Array Object
-		VAO *vao_sd;
-		VAO *vao_hd;
+		VAO *vao_0;
+		VAO *vao_1;
 
 		// Textura
-		Texture *texture_sd;
-		Texture *texture_hd;
+		Texture *texture_0;
+		Texture *texture_1;
 
 		// Posicion
 		GLfloat z_max;
@@ -66,19 +56,18 @@ class Object
 		glm::vec3 pos_1;
 
 		// Desplazamiento
-		glm::vec2 offset_0;
-		glm::vec2 offset_1;
+		glm::vec3 offset_0;
+		glm::vec3 offset_1;
 
 		// Escala
-		glm::vec2 scale_0;
-		glm::vec2 scale_1;
+		glm::vec3 scale_0;
+		glm::vec3 scale_1;
 
 		// Rotacion
 		glm::quat rot_0;
 		glm::quat rot_1;
 		glm::vec3 point_0;
 		glm::vec3 point_1;
-		glm::quat *rot_ref;
 
 		// Material
 		glm::vec4 color;
@@ -118,12 +107,10 @@ class Object
 		void zoomIn ();
 		void zoomOut ();
 
-		// Actualiza la posicion ortogonal
-		void updateOrthoPosition ();
 
-
-		// Retorna apuntador a rotacion
-		glm::quat *rotPointer ();
+		// Getters
+		const glm::quat &rot ();
+		const glm::vec3 &pos ();
 
 
 		// Metodo virtual puro dibujar
@@ -134,7 +121,7 @@ class Object
 
 
 		// Desctructor virtual puro
-		virtual ~Object () = 0;
+		virtual ~Object ();
 
 };
 

@@ -15,7 +15,8 @@ SOURCES += main.cpp \
     minicube.cpp \
     object.cpp \
     light.cpp \
-    gui.cpp
+    gui.cpp \
+    flatobject.cpp
 
 HEADERS += \
     rubik.h \
@@ -27,7 +28,8 @@ HEADERS += \
     minicube.h \
     object.h \
     light.h \
-    gui.h
+    gui.h \
+    flatobject.h
 
 DISTFILES += \
     README.md

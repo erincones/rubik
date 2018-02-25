@@ -2,9 +2,9 @@
 #define CUBE_H
 
 #include <sticker.h>
+#include <object.h>
 #include <vao.h>
 #include <texture.h>
-#include <object.h>
 
 #include <GL/glew.h>
 #include <GL/freeglut.h>
@@ -18,8 +18,8 @@ class Cube : virtual public Object
 {
 	protected:
 		// Geometria estatica para los cubos
-		static VAO *cube_sd;
-		static VAO *cube_hd;
+		static VAO *cube_0;
+		static VAO *cube_1;
 
 		// Dimension y separacion entre cubos
 		static GLfloat size;

@@ -11,7 +11,7 @@ Sticker::Sticker (const FACE &dir, Texture *const img)
 {
 	// Asigna direccion y textura
 	side = dir;
-	texture_sd = img;
+	texture_0 = img;
 
 	// Construye la etiqueta indicada
 	switch (side)
@@ -103,9 +103,8 @@ void Sticker::draw () const
 	loadMaterial();
 
 	// Dibujar objeto
-	if (texture_sd != NULL) texture_sd->enable();
+	if (texture_0 != NULL) texture_0->enable();
 	sticker_sd->draw();
-	if (texture_sd != NULL) texture_sd->disable();
 
 	// Regresa a la matriz anterior
 	glPopMatrix();

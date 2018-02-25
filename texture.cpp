@@ -47,13 +47,15 @@ Texture::Texture (const std::string &path) : texture(0)
 // Habilita la textura
 void Texture::enable () const
 {
+	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, texture);
 }
 
 // Desabilita la textura
-void Texture::disable () const
+void Texture::disable ()
 {
 	glBindTexture(GL_TEXTURE_2D, 0);
+	glDisable(GL_TEXTURE_2D);
 }
 
 

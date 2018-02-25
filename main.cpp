@@ -25,6 +25,7 @@
 
 
 // Objetos
+GUI *gui = NULL;
 Light *light = NULL;
 Scene *scene = NULL;
 Rubik *rubik = NULL;
@@ -69,7 +70,8 @@ void reshape (int w, int h)
 
 	// Actualiza la informacion de la pantalla de los objetos
 	Object::setWindow((GLfloat) w, (GLfloat) h, fovy, zNear, zFar);
-	minicube->updateOrthoPosition();
+	gui->resize();
+	minicube->resize();
 }
 
 // Dibujar escena
@@ -83,15 +85,23 @@ void display ()
 	// Objetos 3D usan proyeccion perspectiva
 	Object::perspective();
 
-	// Escenario y cubo
+
+	// Escena sin iluminacion
+	Light::globalTurnOff();
 	scene->draw();
+
+	// Cubo con iluminacion
+	Light::globalTurnOn();
 	rubik->draw();
+
 
 
 	// Objectos 2D usan proyeccion ortogonal
 	Object::orthogonal();
 
-	// Minicubo guia
+	// GUI y minicubo guia sin iluminacion
+	Light::globalTurnOff();
+	gui->draw();
 	minicube->draw();
 
 
@@ -111,6 +121,8 @@ void idle ()
 
 		loops = 0;
 		game_ms += tick;
+
+		glutPostRedisplay();
 	}
 
 	// Contador de FPS
@@ -122,8 +134,6 @@ void idle ()
 		fps_ms += 1000;
 	}
 
-	// Dibujar
-	glutPostRedisplay();
 }
 
 // Eventos del mouse
@@ -203,6 +213,7 @@ void keyboard (unsigned char key, int, int)
 // Al finalizar la aplicacion
 void close ()
 {
+	delete gui;
 	delete light;
 	delete scene;
 	delete rubik;
@@ -213,7 +224,7 @@ int main(int argc, char **argv)
 {
 	// Inicializar GLUT
 	glutInit(&argc, argv);
-	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH | GLUT_MULTISAMPLE);
+	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH | GLUT_MULTISAMPLE | GLUT_ALPHA);
 	glutInitWindowPosition((glutGet(GLUT_SCREEN_WIDTH) - width) >> 1, (glutGet(GLUT_SCREEN_HEIGHT) - height) >> 1);
 	glutInitWindowSize(width, height);
 	glutCreateWindow("Rubik");
@@ -234,7 +245,6 @@ int main(int argc, char **argv)
 	glutCloseFunc(close);
 
 
-
 	// Obtiene directorio de archivos
 	std::string path = argv[0];
 	path.erase(path.find_last_of("/\\"));
@@ -246,14 +256,12 @@ int main(int argc, char **argv)
 	Object::setPath(path);
 
 
-	// Activa la iluminacion
-	Light::globalTurnOn();
-
 	// Construir objetos
+	gui = new GUI();
 	light = new Light();
 	scene = new Scene();
 	rubik = new Rubik();
-	minicube = new Minicube(rubik, Object::DOWNRIGHT);
+	minicube = new Minicube(rubik, FlatObject::DOWNRIGHT);
 
 
 

@@ -1,9 +1,9 @@
 #ifndef SCENE_H
 #define SCENE_H
 
+#include <object.h>
 #include <vao.h>
 #include <texture.h>
-#include <object.h>
 
 #include <GL/glew.h>
 #include <GL/freeglut.h>

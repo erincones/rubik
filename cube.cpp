@@ -1,8 +1,8 @@
 #include <cube.h>
 
 // Inicializacion de variables estaticas
-VAO *Cube::cube_sd;
-VAO *Cube::cube_hd;
+VAO *Cube::cube_0;
+VAO *Cube::cube_1;
 
 GLfloat Cube::size = 1.0F;
 GLfloat Cube::gap   = 0.0025F;
@@ -102,7 +102,7 @@ void Cube::draw() const
 
 	// Carga material y dibujar objeto
 	loadMaterial();
-	Cube::cube_sd->draw();
+	Cube::cube_0->draw();
 
 	// Regresa a la matriz anterior
 	glPopMatrix();

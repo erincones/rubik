@@ -4,8 +4,8 @@
 Scene::Scene ()
 {
 	// Cargar modelo del escenario
-	vao_sd = vao_hd = new VAO(path + "/scene.obj");
-	texture_sd = texture_hd = new Texture(path + "/background.png");
+	vao_0 = vao_1 = new VAO(path + "/scene.obj");
+	texture_0 = texture_1 = new Texture(path + "/background.png");
 
 	// Posicion
 	pos_1 = glm::vec3(0.0L, 0.0L, -10.5);
@@ -25,14 +25,13 @@ Scene::Scene ()
 
 
 	// Texturas
-	glActiveTexture(GL_TEXTURE0);
-	glEnable(GL_TEXTURE_2D);
 
 	// Normalizacion, Back face culling, Z-Buffer y aliasing
 	glEnable(GL_NORMALIZE);
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_MULTISAMPLE);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 // Dibujar
@@ -50,9 +49,9 @@ void Scene::draw () const
 	loadMaterial();
 
 	// Dibujar escena con textura
-	texture_sd->enable();
-	vao_sd->draw();
-	texture_sd->disable();
+	texture_0->enable();
+	vao_0->draw();
+
 
 	// Regresa a la matriz anterior
 	glPopMatrix();
@@ -71,7 +70,7 @@ void Scene::animate ()
 // Destructor
 Scene::~Scene()
 {
-	delete vao_sd;
-	delete texture_sd;
+	delete vao_0;
+	delete texture_0;
 }
 
