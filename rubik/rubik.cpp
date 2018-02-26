@@ -28,6 +28,14 @@ Rubik::Rubik ()
 
 		cube[i] = new Cube(location);
 	}
+	//iniciar y cargar sonidos en los canales
+	sound = new fmodp();
+	sound->loadsound("rubik", "rubixturn.wav", 1.0f);
+	sound->loadch("rubik", "noloop");
+	sound->loadsound("win", "win.wav", 0.15f);
+	sound->loadch("win", "noloop");
+	sound->loadstream("zen", "z.mp3", 0.055f);
+	sound->loadch("zen", "stream");
 }
 
 // Dibujar modelo
@@ -96,7 +104,7 @@ void Rubik::play (const Rubik::STEP &step)
 		case Rubik::F1: next_move = Cube::Z0; face = Sticker::FRONT; break;
 		case Rubik::B1: next_move = Cube::Z1; face = Sticker::BACK;  break;
 	}
-
+	sound->playsound("rubik");
 	// Obtiene los cubos a rotar y actualiza las caras
 	for (GLubyte i = 0; i < 27; i++)
 	{
@@ -140,13 +148,13 @@ bool Rubik::win () const
 			}
 		}
 	}
-
+	sound->playsound("win");
 	return true;
 }
 
 // Imprimir estado
 void Rubik::print () const
-{
+{	
 	std::cout << "Estado: " << (win() ? "armado" : "desarmado") << std::endl;
 }
 

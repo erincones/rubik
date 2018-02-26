@@ -19,11 +19,13 @@
 #include <queue>
 
 #include <iostream>
-
+#include <fmodp.h>
 
 class Rubik : public Object
 {
 	public:
+		//sistema de sonido
+		fmodp *sound = NULL;
 		// Pasos
 		/***
 		* Nomenclatura Singmaster

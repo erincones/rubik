@@ -10,7 +10,8 @@
 #include <cstdlib>
 
 #include <string>
-
+#include <freetype.h>
+#include <chronometer.hpp>
 
 // Macros para scroll
 #ifndef GLUT_WHEEL_DOWN
@@ -52,7 +53,24 @@ GLint fraps = 0;
 bool move = false;
 bool rotate = false;
 
+//font
+freetype::font_data our_font;
 
+bool cr = false;
+
+chronometer crono{};
+
+void cronometro() {
+	if (!cr) {
+		crono.run();
+		cr = true;
+	}
+	else {
+		crono.stop();
+		crono.reset();
+		cr = false;
+	}
+}
 
 // Callbacks de GLUT
 // Redimensionar ventana
@@ -91,6 +109,21 @@ void display ()
 
 	// Minicubo guia
 	minicube->draw();
+
+	glColor3ub(0xff, 0xff, 0);
+	glPushMatrix();
+	glLoadIdentity();
+	int x, y;
+	x = glutGet(GLUT_WINDOW_WIDTH);
+	y = glutGet(GLUT_WINDOW_HEIGHT);
+	freetype::print(our_font, x*0.25, y*0.95, "Score:\n");
+	std::string handt = "Timer: ";
+	int t = crono.get_time();
+	handt.append(std::to_string(t));
+	handt.append("\n");
+	const char * c = handt.c_str();
+	freetype::print(our_font, x*0.50, y*0.95, c);
+	glPopMatrix();
 
 
 	// Intercamiar buffers
@@ -195,6 +228,11 @@ void keyboard (unsigned char key, int, int)
 		case 'f': case 'F': rubik->play(Rubik::R1); return;
 		case 'g': case 'G': rubik->play(Rubik::F1); return;
 		case 'h': case 'H': rubik->play(Rubik::B1); return;
+		//musica de fondo al presionar m
+		case 'm':case 'M': rubik->sound->playstream("zen"); return;
+		//se inicia o detiene y resetea el cronometro, hay que incluirla en las funciones de randomizar para comenzar el juego
+		//y en la que devuelve el cubo al estado inicial
+		case 'n':case 'N':cronometro(); return;
 	}
 }
 
@@ -216,7 +254,7 @@ int main(int argc, char **argv)
 	glutInitWindowSize(width, height);
 	glutCreateWindow("Rubik");
 	glutCreateMenu(NULL);
-
+	our_font.init("test.ttf", 12);
 
 	// Inicializar GLEW
 	glewInit();
