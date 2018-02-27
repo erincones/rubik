@@ -1,0 +1,13 @@
+# Qt creator
+Makefile
+*.pro.user
+*.autosave
+
+# Archivos objeto
+*.o
+
+# Archivos de Blender
+*.blend1
+
+# Historiales
+*history
