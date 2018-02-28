@@ -32,12 +32,12 @@ GUI::GUI ()
 	// Ubicaciones
 	const GLfloat offset = GUI::gap + scale.x;
 	help->offset_0   = glm::vec3(GUI::border                , GUI::border, 0.0F);
-	conf->offset_0   = glm::vec3(GUI::border +        offset, GUI::border, 0.0F);
-	sound->offset_0  = glm::vec3(GUI::border + 2.0F * offset, GUI::border, 0.0F);
-	window->offset_0 = glm::vec3(GUI::border                , GUI::border, 0.0F);
-	quit->offset_0   = glm::vec3(GUI::border +        offset, GUI::border, 0.0F);
+	conf->offset_0   = glm::vec3(GUI::border + offset       , GUI::border, 0.0F);
+	sound->offset_0  = glm::vec3(GUI::border + offset * 2.0F, GUI::border, 0.0F);
+	window->offset_0 = glm::vec3(GUI::border + offset       , GUI::border, 0.0F);
+	quit->offset_0   = glm::vec3(GUI::border                , GUI::border, 0.0F);
 	mix->offset_0    = glm::vec3(GUI::border                ,      0.500F, 0.0F);
-	solve->offset_0  = glm::vec3(GUI::border +        offset,      0.500F, 0.0F);
+	solve->offset_0  = glm::vec3(GUI::border + offset       ,      0.500F, 0.0F);
 
 	// Puntos de referencia
 	help->origin   = FlatObject::UPLEFT;
@@ -68,12 +68,12 @@ void GUI::draw () const
 
 	// Dibuja botones y paneles
 	help->draw();
-	conf->draw();
+	//conf->draw();
 	sound->draw();
 	window->draw();
 	quit->draw();
 	mix->draw();
-	solve->draw();
+	//solve->draw();
 
 	// Deshabilita transparencia y texturas
 	glDisable(GL_BLEND);

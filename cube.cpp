@@ -9,7 +9,7 @@ GLfloat Cube::gap   = 0.0025F;
 
 
 // Constructor
-Cube::Cube (const GLubyte &location)
+Cube::Cube () : sticker(), visible()
 {
 	// Inicializa angulo y visibilidad
 	angle = 0.0F;
@@ -19,10 +19,19 @@ Cube::Cube (const GLubyte &location)
 	speed = 3.0F;
 	step  = Object::PI_2 * speed / Object::fps;
 
-	// Inicializa en NULL las etiquetas visibles
-	visible[0] = NULL;
-	visible[1] = NULL;
-	visible[2] = NULL;
+
+	// Material
+	color     = glm::vec4(0.00F, 0.00F, 0.00F, 0.1F);
+	ambient   = glm::vec4(0.00F, 0.00F, 0.00F, 1.0F);
+	diffuse   = glm::vec4(0.10F, 0.10F, 0.10F, 1.0F);
+	specular  = glm::vec4(0.75F, 0.75F, 0.75F, 1.0F);
+	shininess = 64.0F;
+}
+
+Cube::Cube (const GLubyte &location)
+{
+	// Construir cubo por defecto
+	*this = Cube();
 
 	// Construye las etiquetas
 	for (GLubyte i = 0; i < 6; i++)
@@ -72,14 +81,6 @@ Cube::Cube (const GLubyte &location)
 			j++;
 		}
 	}
-
-
-	// Material
-	color     = glm::vec4(0.00F, 0.00F, 0.00F, 0.1F);
-	ambient   = glm::vec4(0.00F, 0.00F, 0.00F, 1.0F);
-	diffuse   = glm::vec4(0.10F, 0.10F, 0.10F, 1.0F);
-	specular  = glm::vec4(0.75F, 0.75F, 0.75F, 1.0F);
-	shininess = 64.0F;
 }
 
 

@@ -15,14 +15,11 @@
 #include <glm/gtc/type_ptr.hpp>
 
 
-class Minicube : public Cube, public FlatObject
+class Minicube : virtual public Cube, virtual public FlatObject
 {
 	protected:
 		// Referencia de rotacion
 		const glm::quat &rot_ref;
-
-		// Textura de cada etiqueta
-		Texture *sticker_texture[6];
 
 
 	public:

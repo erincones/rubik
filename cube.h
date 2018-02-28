@@ -35,6 +35,9 @@ class Cube : virtual public Object
 		// Opciones de dibujado
 		bool drawable;
 
+		// Constructor protegido
+		Cube ();
+
 
 	public:
 		// Eje de rotacion
@@ -50,7 +53,7 @@ class Cube : virtual public Object
 		};
 
 		// Constructor
-		Cube (const GLubyte &location = 0x15);
+		Cube (const GLubyte &location);
 
 		// Dibujar
 		void draw () const;

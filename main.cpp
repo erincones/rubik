@@ -86,23 +86,18 @@ void display ()
 	Object::perspective();
 
 
-	// Escena sin iluminacion
-	Light::globalTurnOff();
-	scene->draw();
-
-	// Cubo con iluminacion
+	// Escena y cubo con iluminacion
 	Light::globalTurnOn();
+	scene->draw();
 	rubik->draw();
 
-
-
-	// Objectos 2D usan proyeccion ortogonal
+	// Dibuja minicubo con proyeccion ortogonal
 	Object::orthogonal();
+	minicube->draw();
 
 	// GUI y minicubo guia sin iluminacion
 	Light::globalTurnOff();
 	gui->draw();
-	minicube->draw();
 
 
 	// Intercamiar buffers
